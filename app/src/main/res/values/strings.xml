@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Stockly</string>
+
+    <string name="design_system_title">Stockly</string>
+    <string name="design_system_subtitle">Sistema visual da aplicação</string>
+
+    <string name="inventory_summary_title">Resumo do inventário</string>
+    <string name="inventory_products_count">128 produtos registados</string>
+    <string name="inventory_low_stock_count">4 produtos com stock reduzido</string>
+
+    <string name="product_name_hint">Nome do produto</string>
+
+    <string name="action_add_product">Adicionar produto</string>
+    <string name="action_view_products">Consultar produtos</string>
+    <string name="action_logout">Terminar sessão</string>
+
+    <string name="splash_subtitle">O seu stock, sempre sob controlo.</string>
+    <string name="splash_footer">Gestão simples. Decisões melhores.</string>
+    <string name="splash_logo_description">Logótipo da aplicação Stockly</string>
+
 </resources>
