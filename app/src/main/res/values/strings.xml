@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Stockly</string>
 
     <string name="design_system_title">Stockly</string>
@@ -15,5 +13,9 @@
     <string name="action_add_product">Adicionar produto</string>
     <string name="action_view_products">Consultar produtos</string>
     <string name="action_logout">Terminar sessão</string>
+
+    <string name="splash_subtitle">O seu stock, sempre sob controlo.</string>
+    <string name="splash_footer">Gestão simples. Decisões melhores.</string>
+    <string name="splash_logo_description">Logótipo da aplicação Stockly</string>
 
 </resources>
