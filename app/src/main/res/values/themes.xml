@@ -1,9 +1,45 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Stockly" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Stockly" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Brand -->
+        <item name="colorPrimary">@color/stockly_primary</item>
+        <item name="colorOnPrimary">@color/stockly_on_primary</item>
+        <item name="colorPrimaryContainer">@color/stockly_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/stockly_on_primary_container</item>
+
+        <item name="colorSecondary">@color/stockly_secondary</item>
+        <item name="colorOnSecondary">@color/stockly_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/stockly_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/stockly_on_secondary_container</item>
+
+        <!-- Background and surfaces -->
+        <item name="android:colorBackground">@color/stockly_background</item>
+        <item name="colorSurface">@color/stockly_surface</item>
+        <item name="colorOnSurface">@color/stockly_on_surface</item>
+        <item name="colorSurfaceVariant">@color/stockly_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/stockly_on_surface_variant</item>
+
+        <!-- Borders -->
+        <item name="colorOutline">@color/stockly_outline</item>
+        <item name="colorOutlineVariant">@color/stockly_outline_variant</item>
+
+        <!-- Feedback -->
+        <item name="colorError">@color/stockly_error</item>
+        <item name="colorOnError">@color/stockly_on_error</item>
+        <item name="colorErrorContainer">@color/stockly_error_container</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@color/stockly_background</item>
+        <item name="android:navigationBarColor">@color/stockly_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Window -->
+        <item name="android:windowBackground">@color/stockly_background</item>
+        <item name="android:fontFamily">sans</item>
+
     </style>
 
-    <style name="Theme.Stockly" parent="Base.Theme.Stockly" />
 </resources>
