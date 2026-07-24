@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Spacing -->
+    <dimen name="spacing_2">2dp</dimen>
+    <dimen name="spacing_4">4dp</dimen>
+    <dimen name="spacing_8">8dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
+    <dimen name="spacing_16">16dp</dimen>
+    <dimen name="spacing_20">20dp</dimen>
+    <dimen name="spacing_24">24dp</dimen>
+    <dimen name="spacing_32">32dp</dimen>
+    <dimen name="spacing_40">40dp</dimen>
+    <dimen name="spacing_48">48dp</dimen>
+    <dimen name="spacing_64">64dp</dimen>
+
+    <!-- Screen -->
+    <dimen name="screen_padding_horizontal">20dp</dimen>
+    <dimen name="screen_padding_vertical">24dp</dimen>
+    <dimen name="content_max_width">600dp</dimen>
+
+    <!-- Components -->
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="input_min_height">56dp</dimen>
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="toolbar_height">64dp</dimen>
+    <dimen name="bottom_navigation_height">72dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_spacing">12dp</dimen>
+    <dimen name="card_elevation">1dp</dimen>
+
+    <!-- Corner radius -->
+    <dimen name="radius_small">8dp</dimen>
+    <dimen name="radius_medium">12dp</dimen>
+    <dimen name="radius_large">16dp</dimen>
+    <dimen name="radius_extra_large">24dp</dimen>
+    <dimen name="radius_pill">100dp</dimen>
+
+    <!-- Icons -->
+    <dimen name="icon_small">18dp</dimen>
+    <dimen name="icon_medium">24dp</dimen>
+    <dimen name="icon_large">32dp</dimen>
+    <dimen name="icon_extra_large">48dp</dimen>
+
+    <!-- Product images -->
+    <dimen name="product_image_list">72dp</dimen>
+    <dimen name="product_image_grid_height">160dp</dimen>
+    <dimen name="product_image_detail">240dp</dimen>
+
+</resources>

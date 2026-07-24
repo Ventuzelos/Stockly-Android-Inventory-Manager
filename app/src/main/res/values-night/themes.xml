@@ -1,7 +1,28 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Stockly" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Stockly" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <item name="colorPrimary">@color/stockly_primary</item>
+        <item name="colorOnPrimary">@color/stockly_on_primary</item>
+
+        <item name="colorSecondary">@color/stockly_secondary</item>
+        <item name="colorOnSecondary">@color/stockly_on_secondary</item>
+
+        <item name="android:colorBackground">@color/stockly_background</item>
+        <item name="colorSurface">@color/stockly_surface</item>
+        <item name="colorOnSurface">@color/stockly_on_surface</item>
+
+        <item name="colorError">@color/stockly_error</item>
+        <item name="colorOnError">@color/stockly_on_error</item>
+
+        <item name="android:statusBarColor">@color/stockly_background</item>
+        <item name="android:navigationBarColor">@color/stockly_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <item name="android:windowBackground">@color/stockly_background</item>
+
     </style>
+
 </resources>
