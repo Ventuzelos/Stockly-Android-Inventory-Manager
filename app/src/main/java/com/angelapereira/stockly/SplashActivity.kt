@@ -2,6 +2,7 @@ package com.angelapereira.stockly
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 
@@ -11,8 +12,8 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val splashContent = findViewById<android.view.View>(R.id.splashContent)
-        val splashFooter = findViewById<android.view.View>(R.id.splashFooter)
+        val splashContent = findViewById<View>(R.id.splashContent)
+        val splashFooter = findViewById<View>(R.id.splashFooter)
 
         splashContent.alpha = 0f
         splashContent.scaleX = 0.92f
@@ -27,6 +28,7 @@ class SplashActivity : AppCompatActivity() {
             .start()
 
         splashFooter.alpha = 0f
+
         splashFooter.animate()
             .alpha(0.8f)
             .setStartDelay(350)
@@ -34,8 +36,12 @@ class SplashActivity : AppCompatActivity() {
             .start()
 
         splashContent.postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
-        }, 1800)
+        }, SPLASH_DURATION)
+    }
+
+    companion object {
+        private const val SPLASH_DURATION = 1800L
     }
 }
