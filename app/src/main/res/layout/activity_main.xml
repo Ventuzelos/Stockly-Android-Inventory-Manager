@@ -15,12 +15,14 @@
         android:paddingBottom="@dimen/spacing_32">
 
         <TextView
+            android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/design_system_title"
             android:textAppearance="@style/TextAppearance.Stockly.HeadlineLarge" />
 
         <TextView
+            android:id="@+id/subtitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_4"
@@ -46,6 +48,7 @@
                     android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
 
                 <TextView
+                    android:id="@+id/productsCountTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_8"
@@ -53,6 +56,7 @@
                     android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
 
                 <TextView
+                    android:id="@+id/lowStockCountTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_4"
@@ -65,6 +69,7 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/productNameInputLayout"
             style="@style/Widget.Stockly.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,13 +77,17 @@
             android:hint="@string/product_name_hint">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/productNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords" />
+                android:imeOptions="actionDone"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/addProductButton"
             style="@style/Widget.Stockly.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,6 +95,7 @@
             android:text="@string/action_add_product" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewProductsButton"
             style="@style/Widget.Stockly.Button.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,6 +103,7 @@
             android:text="@string/action_view_products" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/logoutButton"
             style="@style/Widget.Stockly.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
