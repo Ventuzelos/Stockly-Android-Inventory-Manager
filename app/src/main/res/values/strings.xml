@@ -53,4 +53,17 @@
         <item quantity="one">%d produto registado</item>
         <item quantity="other">%d produtos registados</item>
     </plurals>
+
+    <string name="product_form_title">Novo produto</string>
+
+    <string name="product_category_hint">Categoria</string>
+    <string name="product_quantity_hint">Quantidade</string>
+    <string name="product_minimum_stock_hint">Stock mínimo</string>
+
+    <string name="product_category_required">Introduza a categoria do produto.</string>
+    <string name="product_quantity_required">Introduza a quantidade.</string>
+    <string name="product_minimum_stock_required">Introduza o stock mínimo.</string>
+
+    <string name="product_quantity_invalid">Introduza uma quantidade válida.</string>
+    <string name="product_minimum_stock_invalid">Introduza um stock mínimo válido.</string>
 </resources>

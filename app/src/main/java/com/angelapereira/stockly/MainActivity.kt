@@ -23,7 +23,15 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var productNameInputLayout: TextInputLayout
+    private lateinit var productCategoryInputLayout: TextInputLayout
+    private lateinit var productQuantityInputLayout: TextInputLayout
+    private lateinit var productMinimumStockInputLayout: TextInputLayout
+
     private lateinit var productNameEditText: TextInputEditText
+    private lateinit var productCategoryEditText: TextInputEditText
+    private lateinit var productQuantityEditText: TextInputEditText
+    private lateinit var productMinimumStockEditText: TextInputEditText
+
     private lateinit var addProductButton: MaterialButton
     private lateinit var viewProductsButton: MaterialButton
     private lateinit var logoutButton: MaterialButton
@@ -62,10 +70,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindViews() {
         productNameInputLayout = findViewById(R.id.productNameInputLayout)
+        productCategoryInputLayout = findViewById(R.id.productCategoryInputLayout)
+        productQuantityInputLayout = findViewById(R.id.productQuantityInputLayout)
+        productMinimumStockInputLayout =
+            findViewById(R.id.productMinimumStockInputLayout)
+
         productNameEditText = findViewById(R.id.productNameEditText)
+        productCategoryEditText = findViewById(R.id.productCategoryEditText)
+        productQuantityEditText = findViewById(R.id.productQuantityEditText)
+        productMinimumStockEditText =
+            findViewById(R.id.productMinimumStockEditText)
+
         addProductButton = findViewById(R.id.addProductButton)
         viewProductsButton = findViewById(R.id.viewProductsButton)
         logoutButton = findViewById(R.id.logoutButton)
+
         productsCountTextView = findViewById(R.id.productsCountTextView)
         lowStockCountTextView = findViewById(R.id.lowStockCountTextView)
     }
@@ -89,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             confirmLogout()
         }
 
-        productNameEditText.setOnEditorActionListener { _, actionId, _ ->
+        productMinimumStockEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addProduct()
                 true
@@ -103,19 +122,100 @@ class MainActivity : AppCompatActivity() {
                 productNameInputLayout.error = null
             }
         }
+
+        productCategoryEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                productCategoryInputLayout.error = null
+            }
+        }
+
+        productQuantityEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                productQuantityInputLayout.error = null
+            }
+        }
+
+        productMinimumStockEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                productMinimumStockInputLayout.error = null
+            }
+        }
     }
 
     private fun addProduct() {
-        val productName = productNameEditText.text
+        clearFormErrors()
+
+        val name = productNameEditText.text
             ?.toString()
             ?.trim()
             .orEmpty()
 
-        if (productName.isBlank()) {
-            productNameInputLayout.error =
-                getString(R.string.product_name_required)
+        val category = productCategoryEditText.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
 
-            productNameEditText.requestFocus()
+        val quantityText = productQuantityEditText.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
+
+        val minimumStockText = productMinimumStockEditText.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
+
+        when {
+            name.isBlank() -> {
+                productNameInputLayout.error =
+                    getString(R.string.product_name_required)
+
+                productNameEditText.requestFocus()
+                return
+            }
+
+            category.isBlank() -> {
+                productCategoryInputLayout.error =
+                    getString(R.string.product_category_required)
+
+                productCategoryEditText.requestFocus()
+                return
+            }
+
+            quantityText.isBlank() -> {
+                productQuantityInputLayout.error =
+                    getString(R.string.product_quantity_required)
+
+                productQuantityEditText.requestFocus()
+                return
+            }
+
+            minimumStockText.isBlank() -> {
+                productMinimumStockInputLayout.error =
+                    getString(R.string.product_minimum_stock_required)
+
+                productMinimumStockEditText.requestFocus()
+                return
+            }
+        }
+
+        val quantity = quantityText.toIntOrNull()
+
+        if (quantity == null || quantity < 0) {
+            productQuantityInputLayout.error =
+                getString(R.string.product_quantity_invalid)
+
+            productQuantityEditText.requestFocus()
+            return
+        }
+
+        val minimumStock = minimumStockText.toIntOrNull()
+
+        if (minimumStock == null || minimumStock < 0) {
+            productMinimumStockInputLayout.error =
+                getString(R.string.product_minimum_stock_invalid)
+
+            productMinimumStockEditText.requestFocus()
             return
         }
 
@@ -123,7 +223,7 @@ class MainActivity : AppCompatActivity() {
             addProductButton.isEnabled = false
 
             try {
-                val alreadyExists = productDao.productNameExists(productName)
+                val alreadyExists = productDao.productNameExists(name)
 
                 if (alreadyExists) {
                     productNameInputLayout.error =
@@ -134,22 +234,21 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val product = Product(
-                    name = productName,
-                    category = DEFAULT_CATEGORY,
-                    quantity = DEFAULT_QUANTITY,
-                    minimumStock = DEFAULT_MINIMUM_STOCK
+                    name = name,
+                    category = category,
+                    quantity = quantity,
+                    minimumStock = minimumStock
                 )
 
                 productDao.insert(product)
 
-                productNameInputLayout.error = null
-                productNameEditText.text?.clear()
+                clearForm()
 
                 Toast.makeText(
                     this@MainActivity,
                     getString(
                         R.string.product_added_successfully,
-                        productName
+                        name
                     ),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -163,6 +262,24 @@ class MainActivity : AppCompatActivity() {
                 addProductButton.isEnabled = true
             }
         }
+    }
+
+    private fun clearFormErrors() {
+        productNameInputLayout.error = null
+        productCategoryInputLayout.error = null
+        productQuantityInputLayout.error = null
+        productMinimumStockInputLayout.error = null
+    }
+
+    private fun clearForm() {
+        clearFormErrors()
+
+        productNameEditText.text?.clear()
+        productCategoryEditText.text?.clear()
+        productQuantityEditText.text?.clear()
+        productMinimumStockEditText.text?.clear()
+
+        productNameEditText.requestFocus()
     }
 
     private fun showProducts() {
@@ -182,11 +299,18 @@ class MainActivity : AppCompatActivity() {
 
                 val productList = products
                     .mapIndexed { index, product ->
+                        val stockStatus = if (product.isLowStock) {
+                            "Stock reduzido"
+                        } else {
+                            "Stock disponível"
+                        }
+
                         """
                         ${index + 1}. ${product.name}
                         Categoria: ${product.category}
                         Quantidade: ${product.quantity}
                         Stock mínimo: ${product.minimumStock}
+                        Estado: $stockStatus
                         """.trimIndent()
                     }
                     .joinToString(separator = "\n\n")
@@ -246,11 +370,5 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(intent)
         finish()
-    }
-
-    companion object {
-        private const val DEFAULT_CATEGORY = "Sem categoria"
-        private const val DEFAULT_QUANTITY = 0
-        private const val DEFAULT_MINIMUM_STOCK = 5
     }
 }
