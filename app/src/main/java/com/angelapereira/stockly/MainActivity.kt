@@ -17,7 +17,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -283,51 +282,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProducts() {
-        lifecycleScope.launch {
-            try {
-                val products = productDao.getAllProducts().first()
-
-                if (products.isEmpty()) {
-                    MaterialAlertDialogBuilder(this@MainActivity)
-                        .setTitle(R.string.products_dialog_title)
-                        .setMessage(R.string.products_empty_message)
-                        .setPositiveButton(R.string.action_close, null)
-                        .show()
-
-                    return@launch
-                }
-
-                val productList = products
-                    .mapIndexed { index, product ->
-                        val stockStatus = if (product.isLowStock) {
-                            "Stock reduzido"
-                        } else {
-                            "Stock disponível"
-                        }
-
-                        """
-                        ${index + 1}. ${product.name}
-                        Categoria: ${product.category}
-                        Quantidade: ${product.quantity}
-                        Stock mínimo: ${product.minimumStock}
-                        Estado: $stockStatus
-                        """.trimIndent()
-                    }
-                    .joinToString(separator = "\n\n")
-
-                MaterialAlertDialogBuilder(this@MainActivity)
-                    .setTitle(R.string.products_dialog_title)
-                    .setMessage(productList)
-                    .setPositiveButton(R.string.action_close, null)
-                    .show()
-            } catch (exception: Exception) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Não foi possível consultar os produtos.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        startActivity(
+            Intent(this, ProductsActivity::class.java)
+        )
     }
 
     private fun observeInventorySummary() {
