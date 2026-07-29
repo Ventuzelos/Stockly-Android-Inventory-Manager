@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/productsMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stockly_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/screen_padding_horizontal"
+    android:paddingTop="@dimen/screen_padding_vertical"
+    android:paddingBottom="@dimen/spacing_16">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/productsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:title="@string/products_page_title"
+        android:titleTextAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+    <TextView
+        android:id="@+id/productsSubtitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_4"
+        android:text="@string/products_page_subtitle"
+        android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/productSearchInputLayout"
+        style="@style/Widget.Stockly.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_20"
+        android:hint="@string/products_search_hint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/productSearchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/productsCountLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_16"
+        android:text="@string/products_count_empty"
+        android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_12"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/spacing_16" />
+
+    <LinearLayout
+        android:id="@+id/productsEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_24"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/products_empty_title"
+            android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:gravity="center"
+            android:text="@string/products_empty_description"
+            android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+    </LinearLayout>
+
+</LinearLayout>
