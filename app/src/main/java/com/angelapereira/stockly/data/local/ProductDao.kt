@@ -55,4 +55,18 @@ interface ProductDao {
         """
     )
     suspend fun productNameExists(name: String): Boolean
+
+    @Query(
+        """
+        SELECT EXISTS(
+            SELECT 1 FROM products
+            WHERE LOWER(name) = LOWER(:name)
+            AND id != :productId
+        )
+        """
+    )
+    suspend fun productNameExistsForAnotherProduct(
+        name: String,
+        productId: Int
+    ): Boolean
 }

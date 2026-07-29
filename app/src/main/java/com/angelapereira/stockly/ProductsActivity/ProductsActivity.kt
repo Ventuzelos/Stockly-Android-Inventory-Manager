@@ -22,6 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import android.content.Intent
 
 class ProductsActivity : AppCompatActivity() {
 
@@ -97,7 +98,7 @@ class ProductsActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         productAdapter = ProductAdapter(
             onEditClick = { product ->
-                showEditNotAvailableMessage(product)
+                openEditProduct(product)
             },
             onDeleteClick = { product ->
                 confirmDelete(product)
@@ -109,6 +110,20 @@ class ProductsActivity : AppCompatActivity() {
             adapter = productAdapter
             setHasFixedSize(true)
         }
+    }
+
+    private fun openEditProduct(product: Product) {
+        val intent = Intent(
+            this,
+            EditProductActivity::class.java
+        ).apply {
+            putExtra(
+                EditProductActivity.EXTRA_PRODUCT_ID,
+                product.id
+            )
+        }
+
+        startActivity(intent)
     }
 
     private fun setupSearch() {
@@ -222,14 +237,5 @@ class ProductsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showEditNotAvailableMessage(product: Product) {
-        Toast.makeText(
-            this,
-            getString(
-                R.string.product_edit_not_available,
-                product.name
-            ),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+
 }
