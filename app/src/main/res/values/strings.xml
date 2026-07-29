@@ -66,4 +66,36 @@
 
     <string name="product_quantity_invalid">Introduza uma quantidade válida.</string>
     <string name="product_minimum_stock_invalid">Introduza um stock mínimo válido.</string>
+
+    <string name="products_page_title">Produtos</string>
+    <string name="products_page_subtitle">Consulte e gira os produtos registados.</string>
+    <string name="products_search_hint">Pesquisar por nome</string>
+
+    <string name="products_count_empty">0 produtos</string>
+    <string name="products_count_dynamic">%1$d produtos</string>
+
+    <string name="products_empty_title">Ainda não existem produtos</string>
+    <string name="products_empty_description">Adicione produtos no painel principal para os consultar aqui.</string>
+
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+
+    <string name="product_category_value">Categoria: %1$s</string>
+    <string name="product_quantity_value">Quantidade: %1$d</string>
+    <string name="product_minimum_stock_value">Stock mínimo: %1$d</string>
+
+    <string name="stock_status_low">Stock reduzido</string>
+    <string name="stock_status_available">Disponível</string>
+
+    <plurals name="products_count_total">
+        <item quantity="one">%d produto</item>
+        <item quantity="other">%d produtos</item>
+    </plurals>
+
+    <string name="delete_product_dialog_title">Eliminar produto</string>
+    <string name="delete_product_dialog_message">Tem a certeza de que pretende eliminar “%1$s”?</string>
+    <string name="product_deleted_successfully">Produto “%1$s” eliminado.</string>
+    <string name="product_delete_error">Não foi possível eliminar o produto.</string>
+    <string name="product_edit_not_available">A edição de “%1$s” será adicionada na próxima etapa.</string>
+
 </resources>
