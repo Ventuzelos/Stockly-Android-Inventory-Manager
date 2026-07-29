@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editProductMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stockly_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/screen_padding_vertical"
+        android:paddingBottom="@dimen/spacing_32">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/editProductToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:title="@string/edit_product_title"
+            android:titleTextAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_4"
+            android:text="@string/edit_product_subtitle"
+            android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editProductNameInputLayout"
+            style="@style/Widget.Stockly.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:hint="@string/product_name_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProductNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editProductCategoryInputLayout"
+            style="@style/Widget.Stockly.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:hint="@string/product_category_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProductCategoryEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editProductQuantityInputLayout"
+                style="@style/Widget.Stockly.TextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:hint="@string/product_quantity_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editProductQuantityEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editProductMinimumStockInputLayout"
+                style="@style/Widget.Stockly.TextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_6"
+                android:layout_weight="1"
+                android:hint="@string/product_minimum_stock_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editProductMinimumStockEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveProductChangesButton"
+            style="@style/Widget.Stockly.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:text="@string/action_save_changes" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancelEditProductButton"
+            style="@style/Widget.Stockly.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:text="@string/action_cancel" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -98,4 +98,11 @@
     <string name="product_delete_error">Não foi possível eliminar o produto.</string>
     <string name="product_edit_not_available">A edição de “%1$s” será adicionada na próxima etapa.</string>
 
+    <string name="edit_product_title">Editar produto</string>
+    <string name="edit_product_subtitle">Atualize os dados do produto selecionado.</string>
+    <string name="action_save_changes">Guardar alterações</string>
+    <string name="product_updated_successfully">Produto “%1$s” atualizado.</string>
+    <string name="product_update_error">Não foi possível atualizar o produto.</string>
+    <string name="product_not_found">Produto não encontrado.</string>
+    <string name="product_name_used_by_another">Já existe outro produto com este nome.</string>
 </resources>
