@@ -78,6 +78,16 @@ class MovementHistoryViewModel(
         applyFilters()
     }
 
+    fun getCurrentMovements(): List<StockMovementWithProduct> {
+        val state = _uiState.value
+
+        return if (state is MovementHistoryUiState.Success) {
+            state.movements
+        } else {
+            emptyList()
+        }
+    }
+
     private fun applyFilters() {
         val filteredMovements = allMovements.filter { movement ->
             matchesMovementType(movement) &&

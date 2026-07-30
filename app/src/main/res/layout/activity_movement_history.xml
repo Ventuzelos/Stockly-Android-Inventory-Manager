@@ -124,6 +124,13 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="@dimen/spacing_8"
                 android:text="@string/movement_filter_clear" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/exportMovementHistoryButton"
+                style="@style/Widget.Stockly.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_8"
+                android:text="@string/movement_history_export_csv" />
 
         </LinearLayout>
 

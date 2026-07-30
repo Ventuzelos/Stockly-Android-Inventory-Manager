@@ -158,4 +158,12 @@
     <string name="movement_history_filtered_count">
     A mostrar %1$d de %2$d movimentos
 </string>
+
+    <string name="movement_history_export_csv">Exportar histórico para CSV</string>
+    <string name="movement_history_export_empty">Não existem movimentos para exportar.</string>
+    <string name="movement_history_export_success">Histórico exportado com sucesso.</string>
+    <string name="movement_history_export_error">Não foi possível exportar o histórico.</string>
+    <string name="movement_history_export_file_name">stockly_movements.csv</string>
+
+
 </resources>
