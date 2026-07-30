@@ -8,14 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.editproduct.EditProductUiState
 import com.angelapereira.stockly.ui.editproduct.EditProductViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 
 class EditProductActivity : AppCompatActivity() {
 
@@ -50,6 +53,7 @@ class EditProductActivity : AppCompatActivity() {
         setupViewModel()
         setupToolbar()
         setupListeners()
+        observeUiState()
         readProductId()
     }
 
@@ -181,6 +185,73 @@ class EditProductActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    EditProductUiState.Idle -> {
+                        setLoadingState(false)
+                    }
+
+                    EditProductUiState.Loading -> {
+                        setLoadingState(true)
+                    }
+
+                    is EditProductUiState.ProductLoaded -> {
+                        setLoadingState(false)
+                        currentProduct = state.product
+                        fillForm(state.product)
+                        viewModel.resetUiState()
+                    }
+
+                    is EditProductUiState.UpdateSuccess -> {
+                        setLoadingState(false)
+
+                        Toast.makeText(
+                            this@EditProductActivity,
+                            getString(
+                                R.string.product_updated_successfully,
+                                state.productName
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        finish()
+                    }
+
+                    EditProductUiState.DuplicateName -> {
+                        setLoadingState(false)
+
+                        nameInputLayout.error =
+                            getString(
+                                R.string.product_name_used_by_another
+                            )
+
+                        nameEditText.requestFocus()
+                        viewModel.resetUiState()
+                    }
+
+                    EditProductUiState.ProductNotFound -> {
+                        setLoadingState(false)
+                        showProductNotFound()
+                    }
+
+                    EditProductUiState.Error -> {
+                        setLoadingState(false)
+
+                        Toast.makeText(
+                            this@EditProductActivity,
+                            R.string.product_update_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resetUiState()
+                    }
+                }
+            }
+        }
+    }
+
     private fun readProductId() {
         productId = intent.getIntExtra(
             EXTRA_PRODUCT_ID,
@@ -192,38 +263,7 @@ class EditProductActivity : AppCompatActivity() {
             return
         }
 
-        loadProduct()
-    }
-
-    private fun loadProduct() {
-        setLoadingState(true)
-
-        viewModel.loadProduct(
-            productId = productId,
-
-            onSuccess = { product ->
-                setLoadingState(false)
-                currentProduct = product
-                fillForm(product)
-            },
-
-            onNotFound = {
-                setLoadingState(false)
-                showProductNotFound()
-            },
-
-            onError = {
-                setLoadingState(false)
-
-                Toast.makeText(
-                    this,
-                    R.string.product_update_error,
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                finish()
-            }
-        )
+        viewModel.loadProduct(productId)
     }
 
     private fun fillForm(product: Product) {
@@ -319,45 +359,7 @@ class EditProductActivity : AppCompatActivity() {
             minimumStock = minimumStock
         )
 
-        setLoadingState(true)
-
-        viewModel.updateProduct(
-            product = updatedProduct,
-
-            onSuccess = {
-                setLoadingState(false)
-
-                Toast.makeText(
-                    this,
-                    getString(
-                        R.string.product_updated_successfully,
-                        name
-                    ),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                finish()
-            },
-
-            onDuplicate = {
-                setLoadingState(false)
-
-                nameInputLayout.error =
-                    getString(R.string.product_name_used_by_another)
-
-                nameEditText.requestFocus()
-            },
-
-            onError = {
-                setLoadingState(false)
-
-                Toast.makeText(
-                    this,
-                    R.string.product_update_error,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
+        viewModel.updateProduct(updatedProduct)
     }
 
     private fun setLoadingState(isLoading: Boolean) {
