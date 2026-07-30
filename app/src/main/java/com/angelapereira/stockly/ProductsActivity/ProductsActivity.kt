@@ -18,12 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.products.ProductsUiState
 import com.angelapereira.stockly.ui.products.ProductsViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProductsActivity : AppCompatActivity() {
@@ -37,7 +36,6 @@ class ProductsActivity : AppCompatActivity() {
     private lateinit var productAdapter: ProductAdapter
     private lateinit var viewModel: ProductsViewModel
 
-    private var productsJob: Job? = null
     private var currentQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +50,9 @@ class ProductsActivity : AppCompatActivity() {
         setupToolbar()
         setupRecyclerView()
         setupSearch()
-        observeProducts()
+        observeUiState()
+
+        viewModel.observeProducts(currentQuery)
     }
 
     private fun setupWindowInsets() {
@@ -170,7 +170,7 @@ class ProductsActivity : AppCompatActivity() {
                         ?.trim()
                         .orEmpty()
 
-                    observeProducts()
+                    viewModel.observeProducts(currentQuery)
                 }
 
                 override fun afterTextChanged(
@@ -180,16 +180,55 @@ class ProductsActivity : AppCompatActivity() {
         )
     }
 
-    private fun observeProducts() {
-        productsJob?.cancel()
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    ProductsUiState.Loading -> {
+                        showLoadingState()
+                    }
 
-        productsJob = lifecycleScope.launch {
-            viewModel
-                .getProducts(currentQuery)
-                .collectLatest { products ->
-                    updateProductsList(products)
+                    is ProductsUiState.Success -> {
+                        updateProductsList(state.products)
+                    }
+
+                    is ProductsUiState.DeleteSuccess -> {
+                        Toast.makeText(
+                            this@ProductsActivity,
+                            getString(
+                                R.string.product_deleted_successfully,
+                                state.productName
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resumeProducts(currentQuery)
+                    }
+
+                    ProductsUiState.DeleteError -> {
+                        Toast.makeText(
+                            this@ProductsActivity,
+                            R.string.product_delete_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resumeProducts(currentQuery)
+                    }
+
+                    ProductsUiState.Error -> {
+                        showErrorState()
+                    }
                 }
+            }
         }
+    }
+
+    private fun showLoadingState() {
+        productsCountLabelTextView.text =
+            getString(R.string.products_loading)
+
+        productsRecyclerView.visibility = View.GONE
+        productsEmptyState.visibility = View.GONE
     }
 
     private fun updateProductsList(products: List<Product>) {
@@ -217,6 +256,14 @@ class ProductsActivity : AppCompatActivity() {
         }
     }
 
+    private fun showErrorState() {
+        productsCountLabelTextView.text =
+            getString(R.string.products_load_error)
+
+        productsRecyclerView.visibility = View.GONE
+        productsEmptyState.visibility = View.VISIBLE
+    }
+
     private fun confirmDelete(product: Product) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.delete_product_dialog_title)
@@ -233,33 +280,8 @@ class ProductsActivity : AppCompatActivity() {
             .setPositiveButton(
                 R.string.action_delete
             ) { _, _ ->
-                deleteProduct(product)
+                viewModel.deleteProduct(product)
             }
             .show()
-    }
-
-    private fun deleteProduct(product: Product) {
-        viewModel.deleteProduct(
-            product = product,
-
-            onSuccess = {
-                Toast.makeText(
-                    this,
-                    getString(
-                        R.string.product_deleted_successfully,
-                        product.name
-                    ),
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
-
-            onError = {
-                Toast.makeText(
-                    this,
-                    R.string.product_delete_error,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
     }
 }

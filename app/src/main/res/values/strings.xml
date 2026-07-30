@@ -107,4 +107,6 @@
     <string name="product_name_used_by_another">Já existe outro produto com este nome.</string>
     <string name="product_add_error">Não foi possível adicionar o produto.</string>
 
+    <string name="products_loading">A carregar produtos...</string>
+    <string name="products_load_error">Não foi possível carregar os produtos.</string>
 </resources>
