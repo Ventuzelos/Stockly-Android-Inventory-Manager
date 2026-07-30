@@ -6,7 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
 
 class MainViewModel(
     private val repository: ProductRepository
@@ -16,27 +20,45 @@ class MainViewModel(
 
     val lowStockCount: Flow<Int> = repository.getLowStockCount()
 
-    fun addProduct(
-        product: Product,
-        onSuccess: () -> Unit,
-        onDuplicate: () -> Unit,
-        onError: () -> Unit
-    ) {
+    private val _uiState = MutableStateFlow<MainUiState>(
+        MainUiState.Idle
+    )
+
+    val uiState: StateFlow<MainUiState> =
+        _uiState.asStateFlow()
+
+    fun addProduct(product: Product) {
+        if (_uiState.value is MainUiState.Loading) {
+            return
+        }
+
         viewModelScope.launch {
+            _uiState.value = MainUiState.Loading
+
             try {
-                val alreadyExists = repository.productNameExists(product.name)
+                val alreadyExists =
+                    repository.productNameExists(product.name)
 
                 if (alreadyExists) {
-                    onDuplicate()
+                    _uiState.value = MainUiState.Duplicate
                     return@launch
                 }
 
                 repository.insertProduct(product)
-                onSuccess()
+
+                _uiState.value = MainUiState.Success(
+                    productName = product.name
+                )
             } catch (exception: Exception) {
-                onError()
+                _uiState.value = MainUiState.Error(
+                    message = exception.message
+                )
             }
         }
+    }
+
+    fun resetUiState() {
+        _uiState.value = MainUiState.Idle
     }
 
     class Factory(
