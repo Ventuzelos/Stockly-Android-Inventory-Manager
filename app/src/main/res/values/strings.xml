@@ -105,4 +105,6 @@
     <string name="product_update_error">Não foi possível atualizar o produto.</string>
     <string name="product_not_found">Produto não encontrado.</string>
     <string name="product_name_used_by_another">Já existe outro produto com este nome.</string>
+    <string name="product_add_error">Não foi possível adicionar o produto.</string>
+
 </resources>

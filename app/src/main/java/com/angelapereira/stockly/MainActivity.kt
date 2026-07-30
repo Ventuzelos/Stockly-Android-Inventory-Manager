@@ -9,10 +9,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.angelapereira.stockly.data.local.Product
-import com.angelapereira.stockly.data.local.ProductDao
 import com.angelapereira.stockly.data.local.StocklyDatabase
+import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.main.MainViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -34,10 +36,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addProductButton: MaterialButton
     private lateinit var viewProductsButton: MaterialButton
     private lateinit var logoutButton: MaterialButton
+
     private lateinit var productsCountTextView: TextView
     private lateinit var lowStockCountTextView: TextView
 
-    private lateinit var productDao: ProductDao
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +50,18 @@ class MainActivity : AppCompatActivity() {
 
         setupWindowInsets()
         bindViews()
-        setupDatabase()
+        setupViewModel()
         setupListeners()
         observeInventorySummary()
     }
 
     private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { view, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
             view.setPadding(
                 systemBars.left,
@@ -68,30 +75,61 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        productNameInputLayout = findViewById(R.id.productNameInputLayout)
-        productCategoryInputLayout = findViewById(R.id.productCategoryInputLayout)
-        productQuantityInputLayout = findViewById(R.id.productQuantityInputLayout)
+        productNameInputLayout =
+            findViewById(R.id.productNameInputLayout)
+
+        productCategoryInputLayout =
+            findViewById(R.id.productCategoryInputLayout)
+
+        productQuantityInputLayout =
+            findViewById(R.id.productQuantityInputLayout)
+
         productMinimumStockInputLayout =
             findViewById(R.id.productMinimumStockInputLayout)
 
-        productNameEditText = findViewById(R.id.productNameEditText)
-        productCategoryEditText = findViewById(R.id.productCategoryEditText)
-        productQuantityEditText = findViewById(R.id.productQuantityEditText)
+        productNameEditText =
+            findViewById(R.id.productNameEditText)
+
+        productCategoryEditText =
+            findViewById(R.id.productCategoryEditText)
+
+        productQuantityEditText =
+            findViewById(R.id.productQuantityEditText)
+
         productMinimumStockEditText =
             findViewById(R.id.productMinimumStockEditText)
 
-        addProductButton = findViewById(R.id.addProductButton)
-        viewProductsButton = findViewById(R.id.viewProductsButton)
-        logoutButton = findViewById(R.id.logoutButton)
+        addProductButton =
+            findViewById(R.id.addProductButton)
 
-        productsCountTextView = findViewById(R.id.productsCountTextView)
-        lowStockCountTextView = findViewById(R.id.lowStockCountTextView)
+        viewProductsButton =
+            findViewById(R.id.viewProductsButton)
+
+        logoutButton =
+            findViewById(R.id.logoutButton)
+
+        productsCountTextView =
+            findViewById(R.id.productsCountTextView)
+
+        lowStockCountTextView =
+            findViewById(R.id.lowStockCountTextView)
     }
 
-    private fun setupDatabase() {
-        productDao = StocklyDatabase
-            .getInstance(applicationContext)
-            .productDao()
+    private fun setupViewModel() {
+        val database = StocklyDatabase.getInstance(
+            applicationContext
+        )
+
+        val repository = ProductRepository(
+            productDao = database.productDao()
+        )
+
+        val factory = MainViewModel.Factory(repository)
+
+        viewModel = ViewModelProvider(
+            this,
+            factory
+        )[MainViewModel::class.java]
     }
 
     private fun setupListeners() {
@@ -107,7 +145,12 @@ class MainActivity : AppCompatActivity() {
             confirmLogout()
         }
 
-        productMinimumStockEditText.setOnEditorActionListener { _, actionId, _ ->
+        productMinimumStockEditText.setOnEditorActionListener {
+                _,
+                actionId,
+                _
+            ->
+
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addProduct()
                 true
@@ -134,7 +177,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        productMinimumStockEditText.setOnFocusChangeListener { _, hasFocus ->
+        productMinimumStockEditText.setOnFocusChangeListener {
+                _,
+                hasFocus
+            ->
+
             if (hasFocus) {
                 productMinimumStockInputLayout.error = null
             }
@@ -218,49 +265,51 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        lifecycleScope.launch {
-            addProductButton.isEnabled = false
+        val product = Product(
+            name = name,
+            category = category,
+            quantity = quantity,
+            minimumStock = minimumStock
+        )
 
-            try {
-                val alreadyExists = productDao.productNameExists(name)
+        addProductButton.isEnabled = false
 
-                if (alreadyExists) {
-                    productNameInputLayout.error =
-                        getString(R.string.product_already_exists)
+        viewModel.addProduct(
+            product = product,
 
-                    productNameEditText.requestFocus()
-                    return@launch
-                }
-
-                val product = Product(
-                    name = name,
-                    category = category,
-                    quantity = quantity,
-                    minimumStock = minimumStock
-                )
-
-                productDao.insert(product)
-
+            onSuccess = {
+                addProductButton.isEnabled = true
                 clearForm()
 
                 Toast.makeText(
-                    this@MainActivity,
+                    this,
                     getString(
                         R.string.product_added_successfully,
                         name
                     ),
                     Toast.LENGTH_SHORT
                 ).show()
-            } catch (exception: Exception) {
+            },
+
+            onDuplicate = {
+                addProductButton.isEnabled = true
+
+                productNameInputLayout.error =
+                    getString(R.string.product_already_exists)
+
+                productNameEditText.requestFocus()
+            },
+
+            onError = {
+                addProductButton.isEnabled = true
+
                 Toast.makeText(
-                    this@MainActivity,
-                    "Não foi possível adicionar o produto.",
+                    this,
+                    R.string.product_add_error,
                     Toast.LENGTH_SHORT
                 ).show()
-            } finally {
-                addProductButton.isEnabled = true
             }
-        }
+        )
     }
 
     private fun clearFormErrors() {
@@ -283,23 +332,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun showProducts() {
         startActivity(
-            Intent(this, ProductsActivity::class.java)
+            Intent(
+                this,
+                ProductsActivity::class.java
+            )
         )
     }
 
     private fun observeInventorySummary() {
         lifecycleScope.launch {
-            productDao.getProductsCount().collect { totalProducts ->
-                productsCountTextView.text = resources.getQuantityString(
-                    R.plurals.inventory_products_total,
-                    totalProducts,
-                    totalProducts
-                )
+            viewModel.productsCount.collect { totalProducts ->
+                productsCountTextView.text =
+                    resources.getQuantityString(
+                        R.plurals.inventory_products_total,
+                        totalProducts,
+                        totalProducts
+                    )
             }
         }
 
         lifecycleScope.launch {
-            productDao.getLowStockCount().collect { lowStockProducts ->
+            viewModel.lowStockCount.collect { lowStockProducts ->
                 lowStockCountTextView.text = getString(
                     R.string.inventory_low_stock_dynamic,
                     lowStockProducts
@@ -320,7 +373,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val intent = Intent(this, LoginActivity::class.java).apply {
+        val intent = Intent(
+            this,
+            LoginActivity::class.java
+        ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
