@@ -46,6 +46,11 @@
             android:name=".StockMovementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".MovementHistoryActivity"
+            android:exported="false" />
+
     </application>
+
 
 </manifest>

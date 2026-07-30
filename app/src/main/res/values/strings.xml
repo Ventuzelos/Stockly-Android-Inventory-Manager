@@ -127,4 +127,21 @@
 
     <string name="action_stock_movement">Movimento</string>
 
+    <string name="movement_history_entry">Entrada</string>
+    <string name="movement_history_exit">Saída</string>
+    <string name="movement_history_quantity">Quantidade: %1$d</string>
+    <string name="movement_history_date">Data: %1$s</string>
+
+    <string name="movement_history_title">Histórico de movimentos</string>
+    <string name="movement_history_loading">A carregar movimentos…</string>
+    <string name="movement_history_empty">Ainda não existem movimentos registados.</string>
+    <string name="movement_history_error">Não foi possível carregar o histórico.</string>
+
+    <plurals name="movement_history_count">
+        <item quantity="one">%1$d movimento registado</item>
+        <item quantity="other">%1$d movimentos registados</item>
+    </plurals>
+
+    <string name="action_view_movement_history">Ver histórico de movimentos</string>
+
 </resources>

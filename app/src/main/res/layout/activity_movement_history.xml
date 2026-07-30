@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movementHistoryMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stockly_background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/movementHistoryToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:title="@string/movement_history_title"
+        android:titleTextAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+    <TextView
+        android:id="@+id/movementHistoryCountTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/spacing_12"
+        android:paddingBottom="@dimen/spacing_12"
+        android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/movementHistoryRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingBottom="@dimen/spacing_24" />
+
+    <LinearLayout
+        android:id="@+id/movementHistoryEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding_horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/movement_history_empty"
+            android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
+
+    </LinearLayout>
+
+</LinearLayout>

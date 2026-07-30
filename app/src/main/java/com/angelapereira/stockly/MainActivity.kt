@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var addProductButton: MaterialButton
     private lateinit var viewProductsButton: MaterialButton
+    private lateinit var viewMovementHistoryButton: MaterialButton
     private lateinit var logoutButton: MaterialButton
 
     private lateinit var productsCountTextView: TextView
@@ -107,6 +108,9 @@ class MainActivity : AppCompatActivity() {
         viewProductsButton =
             findViewById(R.id.viewProductsButton)
 
+        viewMovementHistoryButton =
+            findViewById(R.id.viewMovementHistoryButton)
+
         logoutButton =
             findViewById(R.id.logoutButton)
 
@@ -141,6 +145,10 @@ class MainActivity : AppCompatActivity() {
 
         viewProductsButton.setOnClickListener {
             showProducts()
+        }
+
+        viewMovementHistoryButton.setOnClickListener {
+            showMovementHistory()
         }
 
         logoutButton.setOnClickListener {
@@ -354,6 +362,15 @@ class MainActivity : AppCompatActivity() {
             Intent(
                 this,
                 ProductsActivity::class.java
+            )
+        )
+    }
+
+    private fun showMovementHistory() {
+        startActivity(
+            Intent(
+                this,
+                MovementHistoryActivity::class.java
             )
         )
     }

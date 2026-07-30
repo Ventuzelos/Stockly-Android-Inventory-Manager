@@ -175,6 +175,14 @@
             android:text="@string/action_view_products" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewMovementHistoryButton"
+            style="@style/Widget.Stockly.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:text="@string/action_view_movement_history" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/logoutButton"
             style="@style/Widget.Stockly.Button.Text"
             android:layout_width="wrap_content"
