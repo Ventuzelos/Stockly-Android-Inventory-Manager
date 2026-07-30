@@ -1,10 +1,13 @@
 package com.angelapereira.stockly
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +28,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import kotlinx.coroutines.launch
+import java.io.OutputStreamWriter
 import java.text.DateFormat
 import java.util.Date
 
@@ -44,6 +48,7 @@ class MovementHistoryActivity : AppCompatActivity() {
     private lateinit var startDateFilterButton: MaterialButton
     private lateinit var endDateFilterButton: MaterialButton
     private lateinit var clearFiltersButton: MaterialButton
+    private lateinit var exportHistoryButton: MaterialButton
 
     private lateinit var movementAdapter: MovementHistoryAdapter
     private lateinit var viewModel: MovementHistoryViewModel
@@ -52,6 +57,15 @@ class MovementHistoryActivity : AppCompatActivity() {
     private var selectedEndDate: Long? = null
 
     private var isUpdatingFilters = false
+
+    private val createCsvDocumentLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.CreateDocument("text/csv")
+        ) { uri ->
+            if (uri != null) {
+                exportMovementsToCsv(uri)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +130,9 @@ class MovementHistoryActivity : AppCompatActivity() {
 
         clearFiltersButton =
             findViewById(R.id.clearMovementFiltersButton)
+
+        exportHistoryButton =
+            findViewById(R.id.exportMovementHistoryButton)
     }
 
     private fun setupViewModel() {
@@ -210,24 +227,30 @@ class MovementHistoryActivity : AppCompatActivity() {
 
                 viewModel.filterByProduct(productFilter)
             }
+
         productFilterAutoCompleteTextView.setOnEditorActionListener {
                 _,
                 actionId,
                 _
             ->
 
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
-                val typedProduct = productFilterAutoCompleteTextView.text
-                    ?.toString()
-                    ?.trim()
-                    .orEmpty()
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+            ) {
+                val typedProduct =
+                    productFilterAutoCompleteTextView.text
+                        ?.toString()
+                        ?.trim()
+                        .orEmpty()
 
                 val allProductsText = getString(
                     R.string.movement_filter_all_products
                 )
 
                 val productFilter = typedProduct.takeIf {
-                    it.isNotBlank() && it != allProductsText
+                    it.isNotBlank() &&
+                            it != allProductsText
                 }
 
                 viewModel.filterByProduct(productFilter)
@@ -248,6 +271,10 @@ class MovementHistoryActivity : AppCompatActivity() {
 
         clearFiltersButton.setOnClickListener {
             viewModel.clearFilters()
+        }
+
+        exportHistoryButton.setOnClickListener {
+            startCsvExport()
         }
     }
 
@@ -412,6 +439,104 @@ class MovementHistoryActivity : AppCompatActivity() {
             R.string.movement_filter_date_value,
             formattedDate
         )
+    }
+
+    private fun startCsvExport() {
+        val movements = viewModel.getCurrentMovements()
+
+        if (movements.isEmpty()) {
+            Toast.makeText(
+                this,
+                R.string.movement_history_export_empty,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        createCsvDocumentLauncher.launch(
+            getString(
+                R.string.movement_history_export_file_name
+            )
+        )
+    }
+
+    private fun exportMovementsToCsv(uri: Uri) {
+        val movements = viewModel.getCurrentMovements()
+
+        try {
+            val outputStream =
+                contentResolver.openOutputStream(uri)
+                    ?: throw IllegalStateException(
+                        "Não foi possível abrir o ficheiro."
+                    )
+
+            OutputStreamWriter(
+                outputStream,
+                Charsets.UTF_8
+            ).buffered().use { writer ->
+                writer.write("\uFEFF")
+
+                writer.appendLine(
+                    "Produto;Tipo;Quantidade;Data"
+                )
+
+                movements.forEach { movement ->
+                    val type = when (movement.type) {
+                        MovementType.ENTRY ->
+                            getString(
+                                R.string.movement_history_entry
+                            )
+
+                        MovementType.EXIT ->
+                            getString(
+                                R.string.movement_history_exit
+                            )
+                    }
+
+                    val date = DateFormat
+                        .getDateTimeInstance(
+                            DateFormat.SHORT,
+                            DateFormat.SHORT
+                        )
+                        .format(
+                            Date(movement.createdAt)
+                        )
+
+                    writer.appendLine(
+                        listOf(
+                            movement.productName,
+                            type,
+                            movement.quantity.toString(),
+                            date
+                        ).joinToString(";") { value ->
+                            escapeCsvValue(value)
+                        }
+                    )
+                }
+            }
+
+            Toast.makeText(
+                this,
+                R.string.movement_history_export_success,
+                Toast.LENGTH_SHORT
+            ).show()
+        } catch (exception: Exception) {
+            Toast.makeText(
+                this,
+                R.string.movement_history_export_error,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun escapeCsvValue(value: String): String {
+        val escapedValue = value.replace(
+            "\"",
+            "\"\""
+        )
+
+        return "\"$escapedValue\""
     }
 
     private fun showLoadingState() {
