@@ -5,40 +5,52 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.repository.ProductRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class EditProductViewModel(
     private val repository: ProductRepository
 ) : ViewModel() {
 
-    fun loadProduct(
-        productId: Int,
-        onSuccess: (Product) -> Unit,
-        onNotFound: () -> Unit,
-        onError: () -> Unit
-    ) {
+    private val _uiState = MutableStateFlow<EditProductUiState>(
+        EditProductUiState.Idle
+    )
+
+    val uiState: StateFlow<EditProductUiState> =
+        _uiState.asStateFlow()
+
+    fun loadProduct(productId: Int) {
+        if (_uiState.value is EditProductUiState.Loading) {
+            return
+        }
+
         viewModelScope.launch {
+            _uiState.value = EditProductUiState.Loading
+
             try {
                 val product = repository.getProductById(productId)
 
-                if (product == null) {
-                    onNotFound()
+                _uiState.value = if (product == null) {
+                    EditProductUiState.ProductNotFound
                 } else {
-                    onSuccess(product)
+                    EditProductUiState.ProductLoaded(product)
                 }
             } catch (exception: Exception) {
-                onError()
+                _uiState.value = EditProductUiState.Error
             }
         }
     }
 
-    fun updateProduct(
-        product: Product,
-        onSuccess: () -> Unit,
-        onDuplicate: () -> Unit,
-        onError: () -> Unit
-    ) {
+    fun updateProduct(product: Product) {
+        if (_uiState.value is EditProductUiState.Loading) {
+            return
+        }
+
         viewModelScope.launch {
+            _uiState.value = EditProductUiState.Loading
+
             try {
                 val duplicateName =
                     repository.productNameExistsForAnotherProduct(
@@ -47,16 +59,26 @@ class EditProductViewModel(
                     )
 
                 if (duplicateName) {
-                    onDuplicate()
+                    _uiState.value =
+                        EditProductUiState.DuplicateName
+
                     return@launch
                 }
 
                 repository.updateProduct(product)
-                onSuccess()
+
+                _uiState.value =
+                    EditProductUiState.UpdateSuccess(
+                        productName = product.name
+                    )
             } catch (exception: Exception) {
-                onError()
+                _uiState.value = EditProductUiState.Error
             }
         }
+    }
+
+    fun resetUiState() {
+        _uiState.value = EditProductUiState.Idle
     }
 
     class Factory(
