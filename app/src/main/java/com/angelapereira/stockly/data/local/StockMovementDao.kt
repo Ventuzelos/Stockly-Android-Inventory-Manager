@@ -31,6 +31,23 @@ interface StockMovementDao {
         productId: Int
     ): Flow<List<StockMovement>>
 
+    @Query(
+        """
+    SELECT
+        stock_movements.id,
+        stock_movements.productId,
+        products.name AS productName,
+        stock_movements.type,
+        stock_movements.quantity,
+        stock_movements.createdAt
+    FROM stock_movements
+    INNER JOIN products
+        ON products.id = stock_movements.productId
+    ORDER BY stock_movements.createdAt DESC
+    """
+    )
+    fun getMovementHistory(): Flow<List<StockMovementWithProduct>>
+
     @Transaction
     suspend fun registerMovement(
         movement: StockMovement,
