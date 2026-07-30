@@ -109,4 +109,22 @@
 
     <string name="products_loading">A carregar produtos...</string>
     <string name="products_load_error">Não foi possível carregar os produtos.</string>
+
+    <string name="stock_movement_title">Movimento de stock</string>
+    <string name="stock_movement_product">Produto: %1$s</string>
+    <string name="stock_movement_type_label">Tipo de movimento</string>
+    <string name="stock_movement_entry">Entrada</string>
+    <string name="stock_movement_exit">Saída</string>
+    <string name="stock_movement_quantity_hint">Quantidade</string>
+    <string name="action_register_movement">Registar movimento</string>
+
+    <string name="stock_movement_quantity_required">Introduza a quantidade.</string>
+    <string name="stock_movement_quantity_invalid">Introduza uma quantidade superior a zero.</string>
+    <string name="stock_movement_success">Movimento registado com sucesso.</string>
+    <string name="stock_movement_insufficient_stock">A quantidade indicada é superior ao stock disponível.</string>
+    <string name="stock_movement_product_not_found">Produto não encontrado.</string>
+    <string name="stock_movement_error">Não foi possível registar o movimento.</string>
+
+    <string name="action_stock_movement">Movimento</string>
+
 </resources>

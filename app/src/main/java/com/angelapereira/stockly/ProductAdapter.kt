@@ -11,9 +11,12 @@ import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.databinding.ItemProductBinding
 
 class ProductAdapter(
+    private val onMovementClick: (Product) -> Unit,
     private val onEditClick: (Product) -> Unit,
     private val onDeleteClick: (Product) -> Unit
-) : ListAdapter<Product, ProductAdapter.ProductViewHolder>(ProductDiffCallback()) {
+) : ListAdapter<Product, ProductAdapter.ProductViewHolder>(
+    ProductDiffCallback()
+) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -97,6 +100,10 @@ class ProductAdapter(
                             R.color.stockly_success_container
                         )
                     )
+            }
+
+            binding.movementProductButton.setOnClickListener {
+                onMovementClick(product)
             }
 
             binding.editProductButton.setOnClickListener {

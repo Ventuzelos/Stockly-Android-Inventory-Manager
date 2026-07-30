@@ -117,6 +117,9 @@ class ProductsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         productAdapter = ProductAdapter(
+            onMovementClick = { product ->
+                openStockMovement(product)
+            },
             onEditClick = { product ->
                 openEditProduct(product)
             },
@@ -132,6 +135,25 @@ class ProductsActivity : AppCompatActivity() {
             adapter = productAdapter
             setHasFixedSize(true)
         }
+    }
+
+    private fun openStockMovement(product: Product) {
+        val intent = Intent(
+            this,
+            StockMovementActivity::class.java
+        ).apply {
+            putExtra(
+                StockMovementActivity.EXTRA_PRODUCT_ID,
+                product.id
+            )
+
+            putExtra(
+                StockMovementActivity.EXTRA_PRODUCT_NAME,
+                product.name
+            )
+        }
+
+        startActivity(intent)
     }
 
     private fun openEditProduct(product: Product) {

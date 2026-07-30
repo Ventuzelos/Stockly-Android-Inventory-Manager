@@ -4,15 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
-    entities = [Product::class],
-    version = 1,
+    entities = [
+        Product::class,
+        StockMovement::class
+    ],
+    version = 2,
     exportSchema = false
 )
+@TypeConverters(StocklyConverters::class)
 abstract class StocklyDatabase : RoomDatabase() {
 
     abstract fun productDao(): ProductDao
+
+    abstract fun stockMovementDao(): StockMovementDao
 
     companion object {
 
@@ -25,7 +32,9 @@ abstract class StocklyDatabase : RoomDatabase() {
                     context.applicationContext,
                     StocklyDatabase::class.java,
                     DATABASE_NAME
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
                 instance
