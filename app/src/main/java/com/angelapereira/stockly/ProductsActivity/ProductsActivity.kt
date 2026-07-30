@@ -1,5 +1,6 @@
 package com.angelapereira.stockly
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,19 +11,19 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.angelapereira.stockly.data.local.Product
-import com.angelapereira.stockly.data.local.ProductDao
 import com.angelapereira.stockly.data.local.StocklyDatabase
+import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.products.ProductsUiState
+import com.angelapereira.stockly.ui.products.ProductsViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import android.content.Intent
 
 class ProductsActivity : AppCompatActivity() {
 
@@ -32,10 +33,9 @@ class ProductsActivity : AppCompatActivity() {
     private lateinit var productsRecyclerView: RecyclerView
     private lateinit var productsEmptyState: View
 
-    private lateinit var productDao: ProductDao
     private lateinit var productAdapter: ProductAdapter
+    private lateinit var viewModel: ProductsViewModel
 
-    private var productsJob: Job? = null
     private var currentQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +46,13 @@ class ProductsActivity : AppCompatActivity() {
 
         setupWindowInsets()
         bindViews()
-        setupDatabase()
+        setupViewModel()
         setupToolbar()
         setupRecyclerView()
         setupSearch()
-        observeProducts()
+        observeUiState()
+
+        viewModel.observeProducts(currentQuery)
     }
 
     private fun setupWindowInsets() {
@@ -75,20 +77,38 @@ class ProductsActivity : AppCompatActivity() {
     private fun bindViews() {
         toolbar = findViewById(R.id.productsToolbar)
         searchEditText = findViewById(R.id.productSearchEditText)
+
         productsCountLabelTextView =
             findViewById(R.id.productsCountLabelTextView)
-        productsRecyclerView = findViewById(R.id.productsRecyclerView)
-        productsEmptyState = findViewById(R.id.productsEmptyState)
+
+        productsRecyclerView =
+            findViewById(R.id.productsRecyclerView)
+
+        productsEmptyState =
+            findViewById(R.id.productsEmptyState)
     }
 
-    private fun setupDatabase() {
-        productDao = StocklyDatabase
-            .getInstance(applicationContext)
-            .productDao()
+    private fun setupViewModel() {
+        val database = StocklyDatabase.getInstance(
+            applicationContext
+        )
+
+        val repository = ProductRepository(
+            productDao = database.productDao()
+        )
+
+        val factory = ProductsViewModel.Factory(repository)
+
+        viewModel = ViewModelProvider(
+            this,
+            factory
+        )[ProductsViewModel::class.java]
     }
 
     private fun setupToolbar() {
-        toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+        toolbar.setNavigationIcon(
+            androidx.appcompat.R.drawable.abc_ic_ab_back_material
+        )
 
         toolbar.setNavigationOnClickListener {
             finish()
@@ -97,6 +117,9 @@ class ProductsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         productAdapter = ProductAdapter(
+            onMovementClick = { product ->
+                openStockMovement(product)
+            },
             onEditClick = { product ->
                 openEditProduct(product)
             },
@@ -106,10 +129,31 @@ class ProductsActivity : AppCompatActivity() {
         )
 
         productsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@ProductsActivity)
+            layoutManager =
+                LinearLayoutManager(this@ProductsActivity)
+
             adapter = productAdapter
             setHasFixedSize(true)
         }
+    }
+
+    private fun openStockMovement(product: Product) {
+        val intent = Intent(
+            this,
+            StockMovementActivity::class.java
+        ).apply {
+            putExtra(
+                StockMovementActivity.EXTRA_PRODUCT_ID,
+                product.id
+            )
+
+            putExtra(
+                StockMovementActivity.EXTRA_PRODUCT_NAME,
+                product.name
+            )
+        }
+
+        startActivity(intent)
     }
 
     private fun openEditProduct(product: Product) {
@@ -148,7 +192,7 @@ class ProductsActivity : AppCompatActivity() {
                         ?.trim()
                         .orEmpty()
 
-                    observeProducts()
+                    viewModel.observeProducts(currentQuery)
                 }
 
                 override fun afterTextChanged(
@@ -158,30 +202,66 @@ class ProductsActivity : AppCompatActivity() {
         )
     }
 
-    private fun observeProducts() {
-        productsJob?.cancel()
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    ProductsUiState.Loading -> {
+                        showLoadingState()
+                    }
 
-        productsJob = lifecycleScope.launch {
-            val productsFlow = if (currentQuery.isBlank()) {
-                productDao.getAllProducts()
-            } else {
-                productDao.searchProducts(currentQuery)
-            }
+                    is ProductsUiState.Success -> {
+                        updateProductsList(state.products)
+                    }
 
-            productsFlow.collectLatest { products ->
-                updateProductsList(products)
+                    is ProductsUiState.DeleteSuccess -> {
+                        Toast.makeText(
+                            this@ProductsActivity,
+                            getString(
+                                R.string.product_deleted_successfully,
+                                state.productName
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resumeProducts(currentQuery)
+                    }
+
+                    ProductsUiState.DeleteError -> {
+                        Toast.makeText(
+                            this@ProductsActivity,
+                            R.string.product_delete_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resumeProducts(currentQuery)
+                    }
+
+                    ProductsUiState.Error -> {
+                        showErrorState()
+                    }
+                }
             }
         }
+    }
+
+    private fun showLoadingState() {
+        productsCountLabelTextView.text =
+            getString(R.string.products_loading)
+
+        productsRecyclerView.visibility = View.GONE
+        productsEmptyState.visibility = View.GONE
     }
 
     private fun updateProductsList(products: List<Product>) {
         productAdapter.submitList(products)
 
-        productsCountLabelTextView.text = resources.getQuantityString(
-            R.plurals.products_count_total,
-            products.size,
-            products.size
-        )
+        productsCountLabelTextView.text =
+            resources.getQuantityString(
+                R.plurals.products_count_total,
+                products.size,
+                products.size
+            )
 
         val hasProducts = products.isNotEmpty()
 
@@ -198,6 +278,14 @@ class ProductsActivity : AppCompatActivity() {
         }
     }
 
+    private fun showErrorState() {
+        productsCountLabelTextView.text =
+            getString(R.string.products_load_error)
+
+        productsRecyclerView.visibility = View.GONE
+        productsEmptyState.visibility = View.VISIBLE
+    }
+
     private fun confirmDelete(product: Product) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.delete_product_dialog_title)
@@ -207,35 +295,15 @@ class ProductsActivity : AppCompatActivity() {
                     product.name
                 )
             )
-            .setNegativeButton(R.string.action_cancel, null)
-            .setPositiveButton(R.string.action_delete) { _, _ ->
-                deleteProduct(product)
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .setPositiveButton(
+                R.string.action_delete
+            ) { _, _ ->
+                viewModel.deleteProduct(product)
             }
             .show()
     }
-
-    private fun deleteProduct(product: Product) {
-        lifecycleScope.launch {
-            try {
-                productDao.delete(product)
-
-                Toast.makeText(
-                    this@ProductsActivity,
-                    getString(
-                        R.string.product_deleted_successfully,
-                        product.name
-                    ),
-                    Toast.LENGTH_SHORT
-                ).show()
-            } catch (exception: Exception) {
-                Toast.makeText(
-                    this@ProductsActivity,
-                    R.string.product_delete_error,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-
 }

@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.main.MainUiState
 import com.angelapereira.stockly.ui.main.MainViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var addProductButton: MaterialButton
     private lateinit var viewProductsButton: MaterialButton
+    private lateinit var viewMovementHistoryButton: MaterialButton
     private lateinit var logoutButton: MaterialButton
 
     private lateinit var productsCountTextView: TextView
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         setupViewModel()
         setupListeners()
         observeInventorySummary()
+        observeUiState()
     }
 
     private fun setupWindowInsets() {
@@ -105,6 +108,9 @@ class MainActivity : AppCompatActivity() {
         viewProductsButton =
             findViewById(R.id.viewProductsButton)
 
+        viewMovementHistoryButton =
+            findViewById(R.id.viewMovementHistoryButton)
+
         logoutButton =
             findViewById(R.id.logoutButton)
 
@@ -139,6 +145,10 @@ class MainActivity : AppCompatActivity() {
 
         viewProductsButton.setOnClickListener {
             showProducts()
+        }
+
+        viewMovementHistoryButton.setOnClickListener {
+            showMovementHistory()
         }
 
         logoutButton.setOnClickListener {
@@ -272,44 +282,61 @@ class MainActivity : AppCompatActivity() {
             minimumStock = minimumStock
         )
 
-        addProductButton.isEnabled = false
+        viewModel.addProduct(product)
+    }
 
-        viewModel.addProduct(
-            product = product,
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    MainUiState.Idle -> {
+                        addProductButton.isEnabled = true
+                    }
 
-            onSuccess = {
-                addProductButton.isEnabled = true
-                clearForm()
+                    MainUiState.Loading -> {
+                        addProductButton.isEnabled = false
+                    }
 
-                Toast.makeText(
-                    this,
-                    getString(
-                        R.string.product_added_successfully,
-                        name
-                    ),
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
+                    is MainUiState.Success -> {
+                        addProductButton.isEnabled = true
+                        clearForm()
 
-            onDuplicate = {
-                addProductButton.isEnabled = true
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(
+                                R.string.product_added_successfully,
+                                state.productName
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                productNameInputLayout.error =
-                    getString(R.string.product_already_exists)
+                        viewModel.resetUiState()
+                    }
 
-                productNameEditText.requestFocus()
-            },
+                    MainUiState.Duplicate -> {
+                        addProductButton.isEnabled = true
 
-            onError = {
-                addProductButton.isEnabled = true
+                        productNameInputLayout.error =
+                            getString(R.string.product_already_exists)
 
-                Toast.makeText(
-                    this,
-                    R.string.product_add_error,
-                    Toast.LENGTH_SHORT
-                ).show()
+                        productNameEditText.requestFocus()
+                        viewModel.resetUiState()
+                    }
+
+                    is MainUiState.Error -> {
+                        addProductButton.isEnabled = true
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.product_add_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.resetUiState()
+                    }
+                }
             }
-        )
+        }
     }
 
     private fun clearFormErrors() {
@@ -335,6 +362,15 @@ class MainActivity : AppCompatActivity() {
             Intent(
                 this,
                 ProductsActivity::class.java
+            )
+        )
+    }
+
+    private fun showMovementHistory() {
+        startActivity(
+            Intent(
+                this,
+                MovementHistoryActivity::class.java
             )
         )
     }

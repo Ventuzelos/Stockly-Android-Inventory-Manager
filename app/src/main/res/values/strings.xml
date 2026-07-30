@@ -107,4 +107,55 @@
     <string name="product_name_used_by_another">Já existe outro produto com este nome.</string>
     <string name="product_add_error">Não foi possível adicionar o produto.</string>
 
+    <string name="products_loading">A carregar produtos...</string>
+    <string name="products_load_error">Não foi possível carregar os produtos.</string>
+
+    <string name="stock_movement_title">Movimento de stock</string>
+    <string name="stock_movement_product">Produto: %1$s</string>
+    <string name="stock_movement_type_label">Tipo de movimento</string>
+    <string name="stock_movement_entry">Entrada</string>
+    <string name="stock_movement_exit">Saída</string>
+    <string name="stock_movement_quantity_hint">Quantidade</string>
+    <string name="action_register_movement">Registar movimento</string>
+
+    <string name="stock_movement_quantity_required">Introduza a quantidade.</string>
+    <string name="stock_movement_quantity_invalid">Introduza uma quantidade superior a zero.</string>
+    <string name="stock_movement_success">Movimento registado com sucesso.</string>
+    <string name="stock_movement_insufficient_stock">A quantidade indicada é superior ao stock disponível.</string>
+    <string name="stock_movement_product_not_found">Produto não encontrado.</string>
+    <string name="stock_movement_error">Não foi possível registar o movimento.</string>
+
+    <string name="action_stock_movement">Movimento</string>
+
+    <string name="movement_history_entry">Entrada</string>
+    <string name="movement_history_exit">Saída</string>
+    <string name="movement_history_quantity">Quantidade: %1$d</string>
+    <string name="movement_history_date">Data: %1$s</string>
+
+    <string name="movement_history_title">Histórico de movimentos</string>
+    <string name="movement_history_loading">A carregar movimentos…</string>
+    <string name="movement_history_empty">Ainda não existem movimentos registados.</string>
+    <string name="movement_history_error">Não foi possível carregar o histórico.</string>
+
+    <plurals name="movement_history_count">
+        <item quantity="one">%1$d movimento registado</item>
+        <item quantity="other">%1$d movimentos registados</item>
+    </plurals>
+
+    <string name="action_view_movement_history">Ver histórico de movimentos</string>
+
+    <string name="movement_history_filters_title">Filtros</string>
+    <string name="movement_filter_all">Todos</string>
+    <string name="movement_filter_entries">Entradas</string>
+    <string name="movement_filter_exits">Saídas</string>
+    <string name="movement_filter_product_hint">Produto</string>
+    <string name="movement_filter_all_products">Todos os produtos</string>
+    <string name="movement_filter_start_date">Data inicial</string>
+    <string name="movement_filter_end_date">Data final</string>
+    <string name="movement_filter_clear">Limpar filtros</string>
+    <string name="movement_filter_date_value">%1$s</string>
+
+    <string name="movement_history_filtered_count">
+    A mostrar %1$d de %2$d movimentos
+</string>
 </resources>

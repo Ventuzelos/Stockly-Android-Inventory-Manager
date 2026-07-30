@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stockMovementMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stockly_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        android:paddingTop="@dimen/screen_padding_vertical"
+        android:paddingBottom="@dimen/spacing_32">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/stockMovementToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:title="@string/stock_movement_title"
+            android:titleTextAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+        <TextView
+            android:id="@+id/stockMovementProductTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_8"
+            android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:text="@string/stock_movement_type_label"
+            android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/movementTypeToggleGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            app:checkedButton="@id/entryMovementButton"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/entryMovementButton"
+                style="@style/Widget.Stockly.Button.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stock_movement_entry" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/exitMovementButton"
+                style="@style/Widget.Stockly.Button.Secondary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_8"
+                android:layout_weight="1"
+                android:text="@string/stock_movement_exit" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/movementQuantityInputLayout"
+            style="@style/Widget.Stockly.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:hint="@string/stock_movement_quantity_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/movementQuantityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerMovementButton"
+            style="@style/Widget.Stockly.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_24"
+            android:text="@string/action_register_movement" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancelMovementButton"
+            style="@style/Widget.Stockly.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:text="@string/action_cancel" />
+
+    </LinearLayout>
+
+</ScrollView>
