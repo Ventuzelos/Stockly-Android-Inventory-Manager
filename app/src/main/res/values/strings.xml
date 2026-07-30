@@ -144,4 +144,18 @@
 
     <string name="action_view_movement_history">Ver histórico de movimentos</string>
 
+    <string name="movement_history_filters_title">Filtros</string>
+    <string name="movement_filter_all">Todos</string>
+    <string name="movement_filter_entries">Entradas</string>
+    <string name="movement_filter_exits">Saídas</string>
+    <string name="movement_filter_product_hint">Produto</string>
+    <string name="movement_filter_all_products">Todos os produtos</string>
+    <string name="movement_filter_start_date">Data inicial</string>
+    <string name="movement_filter_end_date">Data final</string>
+    <string name="movement_filter_clear">Limpar filtros</string>
+    <string name="movement_filter_date_value">%1$s</string>
+
+    <string name="movement_history_filtered_count">
+    A mostrar %1$d de %2$d movimentos
+</string>
 </resources>
