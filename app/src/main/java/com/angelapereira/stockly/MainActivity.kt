@@ -17,6 +17,7 @@ import com.angelapereira.stockly.data.repository.ProductRepository
 import com.angelapereira.stockly.ui.main.MainUiState
 import com.angelapereira.stockly.ui.main.MainViewModel
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -38,7 +39,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewProductsButton: MaterialButton
     private lateinit var logoutButton: MaterialButton
 
+    private lateinit var viewProductsCard: MaterialCardView
+    private lateinit var stockMovementsCard: MaterialCardView
+
     private lateinit var productsCountTextView: TextView
+    private lateinit var inStockCountTextView: TextView
     private lateinit var lowStockCountTextView: TextView
 
     private lateinit var viewModel: MainViewModel
@@ -61,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.main)
         ) { view, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
@@ -77,6 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
+
         productNameInputLayout =
             findViewById(R.id.productNameInputLayout)
 
@@ -110,14 +117,24 @@ class MainActivity : AppCompatActivity() {
         logoutButton =
             findViewById(R.id.logoutButton)
 
+        viewProductsCard =
+            findViewById(R.id.viewProductsCard)
+
+        stockMovementsCard =
+            findViewById(R.id.stockMovementsCard)
+
         productsCountTextView =
             findViewById(R.id.productsCountTextView)
+
+        inStockCountTextView =
+            findViewById(R.id.inStockCountTextView)
 
         lowStockCountTextView =
             findViewById(R.id.lowStockCountTextView)
     }
 
     private fun setupViewModel() {
+
         val database = StocklyDatabase.getInstance(
             applicationContext
         )
@@ -135,12 +152,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+
         addProductButton.setOnClickListener {
             addProduct()
         }
 
-        viewProductsButton.setOnClickListener {
+        viewProductsCard.setOnClickListener {
             showProducts()
+        }
+
+        stockMovementsCard.setOnClickListener {
+            showStockMovements()
         }
 
         logoutButton.setOnClickListener {
@@ -150,8 +172,7 @@ class MainActivity : AppCompatActivity() {
         productMinimumStockEditText.setOnEditorActionListener {
                 _,
                 actionId,
-                _
-            ->
+                _ ->
 
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 addProduct()
@@ -181,8 +202,7 @@ class MainActivity : AppCompatActivity() {
 
         productMinimumStockEditText.setOnFocusChangeListener {
                 _,
-                hasFocus
-            ->
+                hasFocus ->
 
             if (hasFocus) {
                 productMinimumStockInputLayout.error = null
@@ -191,6 +211,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addProduct() {
+
         clearFormErrors()
 
         val name = productNameEditText.text
@@ -214,6 +235,7 @@ class MainActivity : AppCompatActivity() {
             .orEmpty()
 
         when {
+
             name.isBlank() -> {
                 productNameInputLayout.error =
                     getString(R.string.product_name_required)
@@ -250,6 +272,7 @@ class MainActivity : AppCompatActivity() {
         val quantity = quantityText.toIntOrNull()
 
         if (quantity == null || quantity < 0) {
+
             productQuantityInputLayout.error =
                 getString(R.string.product_quantity_invalid)
 
@@ -260,6 +283,7 @@ class MainActivity : AppCompatActivity() {
         val minimumStock = minimumStockText.toIntOrNull()
 
         if (minimumStock == null || minimumStock < 0) {
+
             productMinimumStockInputLayout.error =
                 getString(R.string.product_minimum_stock_invalid)
 
@@ -278,9 +302,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeUiState() {
+
         lifecycleScope.launch {
+
             viewModel.uiState.collect { state ->
+
                 when (state) {
+
                     MainUiState.Idle -> {
                         addProductButton.isEnabled = true
                     }
@@ -290,7 +318,9 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     is MainUiState.Success -> {
+
                         addProductButton.isEnabled = true
+
                         clearForm()
 
                         Toast.makeText(
@@ -306,16 +336,21 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     MainUiState.Duplicate -> {
+
                         addProductButton.isEnabled = true
 
                         productNameInputLayout.error =
-                            getString(R.string.product_already_exists)
+                            getString(
+                                R.string.product_already_exists
+                            )
 
                         productNameEditText.requestFocus()
+
                         viewModel.resetUiState()
                     }
 
                     is MainUiState.Error -> {
+
                         addProductButton.isEnabled = true
 
                         Toast.makeText(
@@ -332,6 +367,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clearFormErrors() {
+
         productNameInputLayout.error = null
         productCategoryInputLayout.error = null
         productQuantityInputLayout.error = null
@@ -339,6 +375,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clearForm() {
+
         clearFormErrors()
 
         productNameEditText.text?.clear()
@@ -350,6 +387,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProducts() {
+
         startActivity(
             Intent(
                 this,
@@ -358,46 +396,66 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun showStockMovements() {
+
+        Toast.makeText(
+            this,
+            "Selecione um produto para consultar os movimentos.",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        showProducts()
+    }
+
     private fun observeInventorySummary() {
+
         lifecycleScope.launch {
+
             viewModel.productsCount.collect { totalProducts ->
+
                 productsCountTextView.text =
-                    resources.getQuantityString(
-                        R.plurals.inventory_products_total,
-                        totalProducts,
-                        totalProducts
-                    )
+                    totalProducts.toString()
             }
         }
 
         lifecycleScope.launch {
+
             viewModel.lowStockCount.collect { lowStockProducts ->
-                lowStockCountTextView.text = getString(
-                    R.string.inventory_low_stock_dynamic,
-                    lowStockProducts
-                )
+
+                lowStockCountTextView.text =
+                    lowStockProducts.toString()
             }
         }
     }
 
     private fun confirmLogout() {
+
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.logout_dialog_title)
             .setMessage(R.string.logout_dialog_message)
-            .setNegativeButton(R.string.action_cancel, null)
-            .setPositiveButton(R.string.action_logout) { _, _ ->
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .setPositiveButton(
+                R.string.action_logout
+            ) { _, _ ->
+
                 logout()
             }
             .show()
     }
 
     private fun logout() {
+
         val intent = Intent(
             this,
             LoginActivity::class.java
         ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         startActivity(intent)

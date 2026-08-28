@@ -5,56 +5,104 @@
     android:id="@+id/loginRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stockly_background"
-    android:paddingHorizontal="@dimen/screen_padding_horizontal">
+    android:background="@color/stockly_background">
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:paddingHorizontal="@dimen/screen_padding_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingTop="@dimen/spacing_48"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/spacing_32"
             android:paddingBottom="@dimen/spacing_32">
 
+
+            <!-- HERO -->
+
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="88dp"
-                android:layout_height="88dp"
-                app:cardBackgroundColor="@color/stockly_primary_container"
-                app:cardCornerRadius="@dimen/radius_extra_large"
-                app:cardElevation="0dp">
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_marginBottom="@dimen/spacing_24"
+                app:cardBackgroundColor="@color/stockly_surface"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/login_logo_description"
-                    android:src="@drawable/ic_stockly_logo" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/login_hero_description"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/stockly_login_hero" />
 
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
+
+            <!-- BRAND -->
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_24"
-                android:text="@string/login_title"
-                android:textAppearance="@style/TextAppearance.Stockly.HeadlineMedium" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/spacing_20">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    app:cardBackgroundColor="@color/stockly_primary_container"
+                    app:cardCornerRadius="@dimen/radius_extra_large"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/login_logo_description"
+                        android:src="@drawable/ic_stockly_logo" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/login_brand_name"
+                        android:textColor="@color/stockly_on_background"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_8"
                 android:gravity="center"
+                android:lineSpacingExtra="4dp"
                 android:text="@string/login_subtitle"
-                android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+                android:textColor="@color/stockly_on_surface_variant"
+                android:textSize="18sp" />
+
+            <!-- FORM -->
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameInputLayout"
@@ -63,15 +111,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_32"
                 android:hint="@string/login_username_hint"
-                app:startIconDrawable="@android:drawable/ic_menu_myplaces">
+                app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/usernameEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:imeOptions="actionNext"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textSize="17sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -83,41 +132,113 @@
                 android:layout_marginTop="@dimen/spacing_16"
                 android:hint="@string/login_password_hint"
                 app:endIconMode="password_toggle"
-                app:startIconDrawable="@android:drawable/ic_lock_lock">
+                app:startIconDrawable="@drawable/ic_lock">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passwordEditText"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textSize="17sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- REMEMBER -->
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/rememberSessionCheckBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/touch_target_min"
                 android:layout_marginTop="@dimen/spacing_12"
+                android:buttonTint="@color/stockly_primary"
                 android:text="@string/login_remember_session"
-                android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+                android:textColor="@color/stockly_on_surface_variant"
+                android:textSize="16sp" />
+
+
+            <!-- LOGIN BUTTON -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loginButton"
                 style="@style/Widget.Stockly.Button.Primary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_24"
-                android:text="@string/login_action" />
+                android:layout_height="56dp"
+                android:layout_marginTop="@dimen/spacing_20"
+                android:text="@string/login_action"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/radius_medium"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconPadding="12dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+
+            <!-- INFO -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_24"
-                android:gravity="center"
-                android:text="@string/login_demo_credentials"
-                android:textAppearance="@style/TextAppearance.Stockly.BodySmall" />
+                android:layout_marginTop="@dimen/spacing_32"
+                app:cardBackgroundColor="@color/stockly_surface"
+                app:cardCornerRadius="@dimen/radius_large"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/stockly_primary_container"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="@color/stockly_primary_container"
+                        app:cardCornerRadius="@dimen/radius_extra_large"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/info_icon_description"
+                            android:src="@drawable/ic_info" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_12"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/login_demo_title"
+                            android:textColor="@color/stockly_on_surface"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_4"
+                            android:text="@string/login_demo_credentials"
+                            android:textColor="@color/stockly_on_surface_variant"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
