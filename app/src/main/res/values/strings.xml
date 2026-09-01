@@ -100,6 +100,24 @@
     <string name="products_dialog_title">Produtos</string>
     <string name="products_empty_message">Ainda não existem produtos registados.</string>
 
+    <!-- Stock History-->
+    <string name="stock_movement_history_title">Histórico de movimentos</string>
+    <string name="stock_movement_history_subtitle">Consulte o histórico de entradas e saídas de stock.</string>
+    <string name="stock_movement_history_count_empty">0 movimentos</string>
+    <string name="stock_movement_history_empty_title">Ainda não existem movimentos</string>
+    <string name="stock_movement_history_empty_description">Os movimentos de stock registados aparecerão aqui.</string>
+    <string name="stock_movement_history_filter_all">Todos</string>
+    <string name="stock_movement_history_filter_entry">Entradas</string>
+    <string name="stock_movement_history_filter_exit">Saídas</string>
+    <string name="stock_movement_history_quantity_label">Quantidade:</string>
+    <string name="stock_movement_history_entry">Entrada</string>
+    <string name="stock_movement_history_exit">Saída</string>
+    <string name="stock_movement_history_date_format">%1$s</string>
+
+    <plurals name="stock_movement_history_count">
+        <item quantity="one">%d movimento</item>
+        <item quantity="other">%d movimentos</item>
+    </plurals>
 
     <!-- PRODUCTS -->
     <string name="products_page_title">Produtos</string>
@@ -134,6 +152,26 @@
     <string name="products_loading">A carregar produtos...</string>
     <string name="products_load_error">Não foi possível carregar os produtos.</string>
 
+    <string name="action_filter">Filtrar produtos</string>
+    <string name="products_sort_recent">Mais recentes</string>
+
+    <string name="filter_products_title">Filtrar produtos</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_available">Stock disponível</string>
+    <string name="filter_low_stock">Stock reduzido</string>
+
+    <string name="sort_products_title">Ordenar produtos</string>
+
+    <string name="sort_newest">Mais recentes</string>
+    <string name="sort_oldest">Mais antigos</string>
+    <string name="sort_name_asc">Nome A–Z</string>
+    <string name="sort_name_desc">Nome Z–A</string>
+    <string name="sort_stock_asc">Stock menor → maior</string>
+    <string name="sort_stock_desc">Stock maior → menor</string>
+
+    <!-- NEW PRODUCT -->
+    <string name="add_product_title">Novo produto</string>
+    <string name="add_product_subtitle">Adicione um novo produto ao seu inventário.</string>
 
     <!-- EDIT PRODUCT -->
     <string name="edit_product_title">Editar produto</string>

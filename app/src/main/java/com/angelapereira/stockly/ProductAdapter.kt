@@ -52,15 +52,12 @@ class ProductAdapter(
                 product.category
             )
 
-            binding.productQuantityTextView.text = context.getString(
-                R.string.product_quantity_value,
-                product.quantity
-            )
+            // Mostrar apenas os valores numéricos
+            binding.productQuantityTextView.text =
+                product.quantity.toString()
 
-            binding.productMinimumStockTextView.text = context.getString(
-                R.string.product_minimum_stock_value,
-                product.minimumStock
-            )
+            binding.productMinimumStockTextView.text =
+                product.minimumStock.toString()
 
             if (product.isLowStock) {
                 binding.productStockStatusTextView.text = context.getString(

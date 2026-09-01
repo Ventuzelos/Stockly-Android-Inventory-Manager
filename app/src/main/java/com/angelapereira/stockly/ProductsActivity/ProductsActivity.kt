@@ -20,10 +20,14 @@ import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
 import com.angelapereira.stockly.ui.products.ProductsUiState
 import com.angelapereira.stockly.ui.products.ProductsViewModel
+import com.angelapereira.stockly.ui.products.ProductStockFilter
+import com.angelapereira.stockly.ui.products.ProductSortOption
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
+import com.google.android.material.button.MaterialButton
+
 
 class ProductsActivity : AppCompatActivity() {
 
@@ -50,6 +54,7 @@ class ProductsActivity : AppCompatActivity() {
         setupToolbar()
         setupRecyclerView()
         setupSearch()
+        setupListeners()
         observeUiState()
 
         viewModel.observeProducts(currentQuery)
@@ -200,6 +205,148 @@ class ProductsActivity : AppCompatActivity() {
                 ) = Unit
             }
         )
+    }
+
+    private fun setupListeners() {
+
+        findViewById<MaterialButton>(
+            R.id.addProductTopButton
+        ).setOnClickListener {
+
+            startActivity(
+                Intent(
+                    this,
+                    AddProductActivity::class.java
+                )
+            )
+        }
+
+        findViewById<MaterialButton>(
+            R.id.filterProductsButton
+        ).setOnClickListener {
+
+            showStockFilterDialog()
+        }
+
+        findViewById<MaterialButton>(
+            R.id.sortProductsButton
+        ).setOnClickListener {
+
+            showSortDialog()
+        }
+    }
+
+    private fun showStockFilterDialog() {
+
+        val options = arrayOf(
+            getString(R.string.filter_all),
+            getString(R.string.filter_available),
+            getString(R.string.filter_low_stock)
+        )
+
+        val currentFilter = viewModel.getCurrentFilter()
+
+        val checkedItem = when (currentFilter) {
+
+            ProductStockFilter.ALL -> 0
+
+            ProductStockFilter.AVAILABLE -> 1
+
+            ProductStockFilter.LOW_STOCK -> 2
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.filter_products_title)
+            .setSingleChoiceItems(
+                options,
+                checkedItem
+            ) { dialog, which ->
+
+                val selectedFilter = when (which) {
+
+                    1 -> ProductStockFilter.AVAILABLE
+
+                    2 -> ProductStockFilter.LOW_STOCK
+
+                    else -> ProductStockFilter.ALL
+                }
+
+                viewModel.setStockFilter(
+                    selectedFilter
+                )
+
+                dialog.dismiss()
+            }
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .show()
+    }
+
+    private fun showSortDialog() {
+
+        val options = arrayOf(
+            getString(R.string.sort_newest),
+            getString(R.string.sort_oldest),
+            getString(R.string.sort_name_asc),
+            getString(R.string.sort_name_desc),
+            getString(R.string.sort_stock_asc),
+            getString(R.string.sort_stock_desc)
+        )
+
+        val currentSort =
+            viewModel.getCurrentSortOption()
+
+        val checkedItem = when (currentSort) {
+
+            ProductSortOption.NEWEST -> 0
+
+            ProductSortOption.OLDEST -> 1
+
+            ProductSortOption.NAME_ASC -> 2
+
+            ProductSortOption.NAME_DESC -> 3
+
+            ProductSortOption.STOCK_ASC -> 4
+
+            ProductSortOption.STOCK_DESC -> 5
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.sort_products_title)
+            .setSingleChoiceItems(
+                options,
+                checkedItem
+            ) { dialog, which ->
+
+                val selectedSort =
+                    when (which) {
+
+                        1 -> ProductSortOption.OLDEST
+
+                        2 -> ProductSortOption.NAME_ASC
+
+                        3 -> ProductSortOption.NAME_DESC
+
+                        4 -> ProductSortOption.STOCK_ASC
+
+                        5 -> ProductSortOption.STOCK_DESC
+
+                        else -> ProductSortOption.NEWEST
+                    }
+
+                viewModel.setSortOption(
+                    selectedSort
+                )
+
+                dialog.dismiss()
+            }
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .show()
     }
 
     private fun observeUiState() {

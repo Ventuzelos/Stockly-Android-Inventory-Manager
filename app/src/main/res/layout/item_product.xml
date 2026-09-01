@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Stockly.Card"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_12">
+    android:layout_marginBottom="16dp"
+
+    app:cardBackgroundColor="@color/stockly_surface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/stockly_outline_variant"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/card_padding">
+        android:padding="16dp">
+
+
+        <!-- ================================================= -->
+        <!-- CABEÇALHO -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,81 +31,298 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+
+            <!-- ÍCONE DO PRODUTO -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+
+                app:cardBackgroundColor="@color/stockly_primary_container"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/productIconImageView"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/products_icon_description"
+                    android:src="@drawable/ic_product" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- NOME + CATEGORIA -->
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/productNameTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAppearance="@style/TextAppearance.Stockly.HeadlineSmall" />
 
                 <TextView
                     android:id="@+id/productCategoryTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_4"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
 
             </LinearLayout>
+
+
+            <!-- ESTADO -->
 
             <TextView
                 android:id="@+id/productStockStatusTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/spacing_12"
-                android:paddingVertical="@dimen/spacing_6"
-                android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_stock_available"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Stockly.BodyMedium"
+                android:textColor="@color/stockly_success" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/productQuantityTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_12"
-            android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
 
-        <TextView
-            android:id="@+id/productMinimumStockTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_4"
-            android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+        <!-- ================================================= -->
+        <!-- INFORMAÇÃO DO STOCK -->
+        <!-- ================================================= -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_12"
-            android:gravity="end"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
+
+
+            <!-- QUANTIDADE -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+
+                    app:cardBackgroundColor="@color/stockly_success_container"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/inventory_stock_icon_description"
+                        android:src="@drawable/ic_arrow_up" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/inventory_in_stock_label"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+                    <TextView
+                        android:id="@+id/productQuantityTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- DIVISOR -->
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="52dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@color/stockly_outline_variant" />
+
+
+            <!-- STOCK MÍNIMO -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+
+                    app:cardBackgroundColor="@color/stockly_warning_container"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/inventory_low_stock_icon_description"
+                        android:src="@drawable/ic_arrow_down" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/product_minimum_stock_hint"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+
+                    <TextView
+                        android:id="@+id/productMinimumStockTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- ================================================= -->
+        <!-- DIVISOR -->
+        <!-- ================================================= -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/stockly_outline_variant" />
+
+
+        <!-- ================================================= -->
+        <!-- AÇÕES -->
+        <!-- ================================================= -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <!-- MOVIMENTO -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/movementProductButton"
                 style="@style/Widget.Stockly.Button.Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/action_stock_movement" />
+
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="2dp"
+
+                android:text="@string/action_stock_movement"
+                android:textColor="@color/stockly_primary"
+
+                app:icon="@drawable/ic_movements"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconSize="18dp"
+                app:iconTint="@color/stockly_primary" />
+
+
+            <!-- EDITAR -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProductButton"
                 style="@style/Widget.Stockly.Button.Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_8"
-                android:text="@string/action_edit" />
+
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="2dp"
+
+                android:text="@string/action_edit"
+                android:textColor="@color/stockly_primary"
+
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconSize="18dp"
+                app:iconTint="@color/stockly_primary" />
+
+
+            <!-- ELIMINAR -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteProductButton"
                 style="@style/Widget.Stockly.Button.Text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_8"
+
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="2dp"
+
                 android:text="@string/action_delete"
-                app:iconTint="@color/stockly_warning" />
+                android:textColor="@color/stockly_error"
+
+                app:icon="@drawable/ic_delete"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconSize="18dp"
+                app:iconTint="@color/stockly_error" />
 
         </LinearLayout>
 
