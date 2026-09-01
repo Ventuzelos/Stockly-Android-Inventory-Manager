@@ -11,6 +11,7 @@ data class Product(
     val category: String,
     val quantity: Int,
     val minimumStock: Int,
+    val price: Double = 0.0,
     val createdAt: Long = System.currentTimeMillis()
 ) {
     val isLowStock: Boolean

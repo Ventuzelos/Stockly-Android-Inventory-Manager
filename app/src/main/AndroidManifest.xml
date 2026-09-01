@@ -39,9 +39,24 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".AddProductActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".EditProductActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".StockMovementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".StockMovementHistoryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

@@ -1,9 +1,7 @@
 package com.angelapereira.stockly
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,35 +14,30 @@ import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
 import com.angelapereira.stockly.ui.main.MainUiState
 import com.angelapereira.stockly.ui.main.MainViewModel
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class AddProductActivity : AppCompatActivity() {
+
+    private lateinit var toolbar: MaterialToolbar
 
     private lateinit var productNameInputLayout: TextInputLayout
     private lateinit var productCategoryInputLayout: TextInputLayout
     private lateinit var productQuantityInputLayout: TextInputLayout
+    private lateinit var productPriceInputLayout: TextInputLayout
     private lateinit var productMinimumStockInputLayout: TextInputLayout
 
     private lateinit var productNameEditText: TextInputEditText
     private lateinit var productCategoryEditText: TextInputEditText
     private lateinit var productQuantityEditText: TextInputEditText
+    private lateinit var productPriceEditText: TextInputEditText
     private lateinit var productMinimumStockEditText: TextInputEditText
 
-    private lateinit var addProductButton: MaterialButton
-    private lateinit var viewProductsButton: MaterialButton
-    private lateinit var logoutButton: MaterialButton
-
-    private lateinit var viewProductsCard: MaterialCardView
-    private lateinit var stockMovementsCard: MaterialCardView
-
-    private lateinit var productsCountTextView: TextView
-    private lateinit var inStockCountTextView: TextView
-    private lateinit var lowStockCountTextView: TextView
+    private lateinit var saveNewProductButton: MaterialButton
+    private lateinit var cancelAddProductButton: MaterialButton
 
     private lateinit var viewModel: MainViewModel
 
@@ -52,19 +45,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_add_product)
 
         setupWindowInsets()
         bindViews()
         setupViewModel()
+        setupToolbar()
         setupListeners()
-        observeInventorySummary()
+        restoreForm(savedInstanceState)
         observeUiState()
     }
 
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
-            findViewById(R.id.main)
+            findViewById(R.id.addProductMain)
         ) { view, insets ->
 
             val systemBars = insets.getInsets(
@@ -84,53 +78,43 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindViews() {
 
+        toolbar = findViewById(R.id.addProductToolbar)
+
         productNameInputLayout =
-            findViewById(R.id.productNameInputLayout)
+            findViewById(R.id.addProductNameInputLayout)
 
         productCategoryInputLayout =
-            findViewById(R.id.productCategoryInputLayout)
+            findViewById(R.id.addProductCategoryInputLayout)
 
         productQuantityInputLayout =
-            findViewById(R.id.productQuantityInputLayout)
+            findViewById(R.id.addProductQuantityInputLayout)
+
+        productPriceInputLayout =
+            findViewById(R.id.addProductPriceInputLayout)
 
         productMinimumStockInputLayout =
-            findViewById(R.id.productMinimumStockInputLayout)
+            findViewById(R.id.addProductMinimumStockInputLayout)
 
         productNameEditText =
-            findViewById(R.id.productNameEditText)
+            findViewById(R.id.addProductNameEditText)
 
         productCategoryEditText =
-            findViewById(R.id.productCategoryEditText)
+            findViewById(R.id.addProductCategoryEditText)
 
         productQuantityEditText =
-            findViewById(R.id.productQuantityEditText)
+            findViewById(R.id.addProductQuantityEditText)
+
+        productPriceEditText =
+            findViewById(R.id.addProductPriceEditText)
 
         productMinimumStockEditText =
-            findViewById(R.id.productMinimumStockEditText)
+            findViewById(R.id.addProductMinimumStockEditText)
 
-        addProductButton =
-            findViewById(R.id.addProductButton)
+        saveNewProductButton =
+            findViewById(R.id.saveNewProductButton)
 
-        viewProductsButton =
-            findViewById(R.id.viewProductsButton)
-
-        logoutButton =
-            findViewById(R.id.logoutButton)
-
-        viewProductsCard =
-            findViewById(R.id.viewProductsCard)
-
-        stockMovementsCard =
-            findViewById(R.id.stockMovementsCard)
-
-        productsCountTextView =
-            findViewById(R.id.productsCountTextView)
-
-        inStockCountTextView =
-            findViewById(R.id.inStockCountTextView)
-
-        lowStockCountTextView =
-            findViewById(R.id.lowStockCountTextView)
+        cancelAddProductButton =
+            findViewById(R.id.cancelAddProductButton)
     }
 
     private fun setupViewModel() {
@@ -151,22 +135,33 @@ class MainActivity : AppCompatActivity() {
         )[MainViewModel::class.java]
     }
 
+    private fun setupToolbar() {
+
+        toolbar.setNavigationIcon(
+            androidx.appcompat.R.drawable.abc_ic_ab_back_material
+        )
+
+        toolbar.setNavigationOnClickListener {
+            saveFormState()
+            finish()
+        }
+    }
+
     private fun setupListeners() {
 
-        addProductButton.setOnClickListener {
+        saveNewProductButton.setOnClickListener {
             addProduct()
         }
 
-        viewProductsCard.setOnClickListener {
-            showProducts()
+        cancelAddProductButton.setOnClickListener {
+            saveFormState()
+            finish()
         }
 
-        stockMovementsCard.setOnClickListener {
-            showStockMovements()
-        }
-
-        logoutButton.setOnClickListener {
-            confirmLogout()
+        productPriceEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                productPriceInputLayout.error = null
+            }
         }
 
         productMinimumStockEditText.setOnEditorActionListener {
@@ -210,6 +205,97 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveFormState() {
+
+        val preferences = getSharedPreferences(
+            "add_product_form",
+            MODE_PRIVATE
+        )
+
+        preferences.edit()
+            .putString(
+                "name",
+                productNameEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "category",
+                productCategoryEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "quantity",
+                productQuantityEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "price",
+                productPriceEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "minimum_stock",
+                productMinimumStockEditText.text?.toString().orEmpty()
+            )
+            .apply()
+    }
+
+    private fun restoreForm(savedInstanceState: Bundle?) {
+
+        val preferences = getSharedPreferences(
+            "add_product_form",
+            MODE_PRIVATE
+        )
+
+        val name = savedInstanceState?.getString("product_name")
+            ?: preferences.getString("name", "")
+
+        val category = savedInstanceState?.getString("product_category")
+            ?: preferences.getString("category", "")
+
+        val quantity = savedInstanceState?.getString("product_quantity")
+            ?: preferences.getString("quantity", "")
+
+        val price = savedInstanceState?.getString("product_price")
+            ?: preferences.getString("price", "")
+
+        val minimumStock =
+            savedInstanceState?.getString("product_minimum_stock")
+                ?: preferences.getString("minimum_stock", "")
+
+        productNameEditText.setText(name)
+        productCategoryEditText.setText(category)
+        productQuantityEditText.setText(quantity)
+        productPriceEditText.setText(price)
+        productMinimumStockEditText.setText(minimumStock)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        outState.putString(
+            "product_name",
+            productNameEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_category",
+            productCategoryEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_quantity",
+            productQuantityEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_price",
+            productPriceEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_minimum_stock",
+            productMinimumStockEditText.text?.toString()
+        )
+
+        super.onSaveInstanceState(outState)
+    }
+
     private fun addProduct() {
 
         clearFormErrors()
@@ -220,6 +306,11 @@ class MainActivity : AppCompatActivity() {
             .orEmpty()
 
         val category = productCategoryEditText.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
+
+        val priceText = productPriceEditText.text
             ?.toString()
             ?.trim()
             .orEmpty()
@@ -252,6 +343,14 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
+            priceText.isBlank() -> {
+                productPriceInputLayout.error =
+                    getString(R.string.product_price_required)
+
+                productPriceEditText.requestFocus()
+                return
+            }
+
             quantityText.isBlank() -> {
                 productQuantityInputLayout.error =
                     getString(R.string.product_quantity_required)
@@ -280,6 +379,19 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        val price = priceText
+            .replace(",", ".")
+            .toDoubleOrNull()
+
+        if (price == null || price < 0) {
+
+            productPriceInputLayout.error =
+                getString(R.string.product_price_invalid)
+
+            productPriceEditText.requestFocus()
+            return
+        }
+
         val minimumStock = minimumStockText.toIntOrNull()
 
         if (minimumStock == null || minimumStock < 0) {
@@ -295,7 +407,8 @@ class MainActivity : AppCompatActivity() {
             name = name,
             category = category,
             quantity = quantity,
-            minimumStock = minimumStock
+            minimumStock = minimumStock,
+            price = price
         )
 
         viewModel.addProduct(product)
@@ -310,21 +423,19 @@ class MainActivity : AppCompatActivity() {
                 when (state) {
 
                     MainUiState.Idle -> {
-                        addProductButton.isEnabled = true
+                        setLoadingState(false)
                     }
 
                     MainUiState.Loading -> {
-                        addProductButton.isEnabled = false
+                        setLoadingState(true)
                     }
 
                     is MainUiState.Success -> {
 
-                        addProductButton.isEnabled = true
-
-                        clearForm()
+                        setLoadingState(false)
 
                         Toast.makeText(
-                            this@MainActivity,
+                            this@AddProductActivity,
                             getString(
                                 R.string.product_added_successfully,
                                 state.productName
@@ -332,12 +443,20 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        viewModel.resetUiState()
+                        getSharedPreferences(
+                            "add_product_form",
+                            MODE_PRIVATE
+                        ).edit()
+                            .clear()
+                            .apply()
+
+                        setResult(RESULT_OK)
+                        finish()
                     }
 
                     MainUiState.Duplicate -> {
 
-                        addProductButton.isEnabled = true
+                        setLoadingState(false)
 
                         productNameInputLayout.error =
                             getString(
@@ -351,10 +470,10 @@ class MainActivity : AppCompatActivity() {
 
                     is MainUiState.Error -> {
 
-                        addProductButton.isEnabled = true
+                        setLoadingState(false)
 
                         Toast.makeText(
-                            this@MainActivity,
+                            this@AddProductActivity,
                             R.string.product_add_error,
                             Toast.LENGTH_SHORT
                         ).show()
@@ -366,97 +485,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setLoadingState(isLoading: Boolean) {
+
+        saveNewProductButton.isEnabled = !isLoading
+        cancelAddProductButton.isEnabled = !isLoading
+
+        productNameEditText.isEnabled = !isLoading
+        productCategoryEditText.isEnabled = !isLoading
+        productQuantityEditText.isEnabled = !isLoading
+        productMinimumStockEditText.isEnabled = !isLoading
+        productPriceEditText.isEnabled = !isLoading
+    }
+
     private fun clearFormErrors() {
 
         productNameInputLayout.error = null
         productCategoryInputLayout.error = null
         productQuantityInputLayout.error = null
         productMinimumStockInputLayout.error = null
-    }
-
-    private fun clearForm() {
-
-        clearFormErrors()
-
-        productNameEditText.text?.clear()
-        productCategoryEditText.text?.clear()
-        productQuantityEditText.text?.clear()
-        productMinimumStockEditText.text?.clear()
-
-        productNameEditText.requestFocus()
-    }
-
-    private fun showProducts() {
-
-        startActivity(
-            Intent(
-                this,
-                ProductsActivity::class.java
-            )
-        )
-    }
-
-    private fun showStockMovements() {
-        startActivity(
-            Intent(
-                this,
-                StockMovementHistoryActivity::class.java
-            )
-        )
-    }
-
-    private fun observeInventorySummary() {
-
-        lifecycleScope.launch {
-
-            viewModel.productsCount.collect { totalProducts ->
-
-                productsCountTextView.text =
-                    totalProducts.toString()
-            }
-        }
-
-        lifecycleScope.launch {
-
-            viewModel.lowStockCount.collect { lowStockProducts ->
-
-                lowStockCountTextView.text =
-                    lowStockProducts.toString()
-            }
-        }
-    }
-
-    private fun confirmLogout() {
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.logout_dialog_title)
-            .setMessage(R.string.logout_dialog_message)
-            .setNegativeButton(
-                R.string.action_cancel,
-                null
-            )
-            .setPositiveButton(
-                R.string.action_logout
-            ) { _, _ ->
-
-                logout()
-            }
-            .show()
-    }
-
-    private fun logout() {
-
-        val intent = Intent(
-            this,
-            LoginActivity::class.java
-        ).apply {
-
-            flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        startActivity(intent)
-        finish()
+        productPriceInputLayout.error = null
     }
 }
