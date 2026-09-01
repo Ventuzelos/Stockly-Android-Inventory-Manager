@@ -20,23 +20,32 @@
         <!-- HEADER -->
 
         <LinearLayout
+            android:id="@+id/stockMovementHistoryHeader"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="104dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/stockMovementHistoryToolbar"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stockMovementHistoryBackButton"
                 android:layout_width="48dp"
-                android:layout_height="56dp"
-                android:background="@android:color/transparent"
-                app:navigationIconTint="#111827" />
+                android:layout_height="48dp"
+                android:contentDescription="@string/action_back"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:padding="0dp"
+                app:backgroundTint="@android:color/transparent"
+                app:icon="@drawable/ic_arrow_back"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="#374151"
+                app:strokeWidth="0dp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:layout_marginStart="4dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -47,88 +56,160 @@
                     android:textSize="28sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/stockMovementHistorySubtitleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/stock_movement_history_subtitle"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
             </LinearLayout>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/stockMovementHistorySubtitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="@string/stock_movement_history_subtitle"
-            android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
 
+        <!-- RESUMO -->
 
-        <!-- FILTRO / RESUMO -->
-
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginTop="4dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E1E5ED"
+            app:strokeWidth="1dp">
 
-            <TextView
-                android:id="@+id/stockMovementHistoryCountTextView"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/stock_movement_history_count_empty"
-                android:textAppearance="@style/TextAppearance.Stockly.BodyLarge" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="18dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/stockMovementHistoryFilterButton"
-                style="@style/Widget.Stockly.Button.Secondary"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="@string/stock_movement_history_filter_all"
-                android:textColor="@color/stockly_primary" />
+                <FrameLayout
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_stock_available">
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_movements"
+                        app:tint="@color/stockly_primary" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/stock_movement_history_summary"
+                        android:textColor="#6B7280"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/stockMovementHistoryCountTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/stock_movement_history_count_empty"
+                        android:textColor="#111827"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/stockMovementHistoryFilterButton"
+                    style="@style/Widget.Stockly.Button.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/stock_movement_history_filter_all"
+                    android:textColor="@color/stockly_primary"
+                    android:textSize="13sp"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- LISTA -->
+        <!-- LISTA / EMPTY STATE -->
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/stockMovementHistoryRecyclerView"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp"
-            android:scrollbars="none" />
+            android:layout_weight="1">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stockMovementHistoryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="2dp"
+                android:paddingBottom="16dp"
+                android:scrollbars="none" />
 
-        <!-- EMPTY STATE -->
-
-        <LinearLayout
-            android:id="@+id/stockMovementHistoryEmptyState"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:id="@+id/stockMovementHistoryEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/stock_movement_history_empty_title"
-                android:textAppearance="@style/TextAppearance.Stockly.TitleLarge" />
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="@string/stock_movement_history_empty_description"
-                android:textAppearance="@style/TextAppearance.Stockly.BodyMedium" />
+                <FrameLayout
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_stock_available">
 
-        </LinearLayout>
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_movements"
+                        app:tint="@color/stockly_primary" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/stock_movement_history_empty_title"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/stock_movement_history_empty_description"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
 

@@ -119,6 +119,20 @@
         <item quantity="other">%d movimentos</item>
     </plurals>
 
+    <string name="stock_movement_history_filter_title">Filtrar movimentos</string>
+    <string name="stock_movement_subtitle">Registe entradas ou saídas de stock</string>
+    <string name="stock_movement_product_label">Produto</string>
+    <string name="stock_movement_category_label">Categoria</string>
+    <string name="stock_movement_current_stock_label">Stock atual</string>
+    <string name="stock_movement_current_stock">%1$d unidades</string>
+    <string name="stock_movement_entry_info">Entrada: adiciona produtos ao stock.</string>
+    <string name="stock_movement_exit_info">Saída: remove produtos do stock.</string>
+    <string name="stock_movement_quantity_label">Quantidade</string>
+    <string name="stock_movement_quantity_helper">Informe a quantidade que deseja adicionar ao stock.</string>
+    <string name="action_back">Voltar</string>
+
+    <string name="stock_movement_history_summary">Movimentos registados</string>
+
     <!-- PRODUCTS -->
     <string name="products_page_title">Produtos</string>
     <string name="products_page_subtitle">Consulte e gira os produtos registados.</string>
@@ -142,6 +156,10 @@
         <item quantity="one">%d produto</item>
         <item quantity="other">%d produtos</item>
     </plurals>
+
+    <string name="product_price_hint">Preço (€)</string>
+    <string name="product_price_required">O preço é obrigatório.</string>
+    <string name="product_price_invalid">Introduza um preço válido.</string>
 
     <string name="delete_product_dialog_title">Eliminar produto</string>
     <string name="delete_product_dialog_message">Tem a certeza de que pretende eliminar “%1$s”?</string>

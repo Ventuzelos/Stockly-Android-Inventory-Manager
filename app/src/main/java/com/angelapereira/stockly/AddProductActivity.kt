@@ -27,11 +27,13 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var productNameInputLayout: TextInputLayout
     private lateinit var productCategoryInputLayout: TextInputLayout
     private lateinit var productQuantityInputLayout: TextInputLayout
+    private lateinit var productPriceInputLayout: TextInputLayout
     private lateinit var productMinimumStockInputLayout: TextInputLayout
 
     private lateinit var productNameEditText: TextInputEditText
     private lateinit var productCategoryEditText: TextInputEditText
     private lateinit var productQuantityEditText: TextInputEditText
+    private lateinit var productPriceEditText: TextInputEditText
     private lateinit var productMinimumStockEditText: TextInputEditText
 
     private lateinit var saveNewProductButton: MaterialButton
@@ -50,6 +52,7 @@ class AddProductActivity : AppCompatActivity() {
         setupViewModel()
         setupToolbar()
         setupListeners()
+        restoreForm(savedInstanceState)
         observeUiState()
     }
 
@@ -86,6 +89,9 @@ class AddProductActivity : AppCompatActivity() {
         productQuantityInputLayout =
             findViewById(R.id.addProductQuantityInputLayout)
 
+        productPriceInputLayout =
+            findViewById(R.id.addProductPriceInputLayout)
+
         productMinimumStockInputLayout =
             findViewById(R.id.addProductMinimumStockInputLayout)
 
@@ -97,6 +103,9 @@ class AddProductActivity : AppCompatActivity() {
 
         productQuantityEditText =
             findViewById(R.id.addProductQuantityEditText)
+
+        productPriceEditText =
+            findViewById(R.id.addProductPriceEditText)
 
         productMinimumStockEditText =
             findViewById(R.id.addProductMinimumStockEditText)
@@ -133,6 +142,7 @@ class AddProductActivity : AppCompatActivity() {
         )
 
         toolbar.setNavigationOnClickListener {
+            saveFormState()
             finish()
         }
     }
@@ -144,7 +154,14 @@ class AddProductActivity : AppCompatActivity() {
         }
 
         cancelAddProductButton.setOnClickListener {
+            saveFormState()
             finish()
+        }
+
+        productPriceEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                productPriceInputLayout.error = null
+            }
         }
 
         productMinimumStockEditText.setOnEditorActionListener {
@@ -188,6 +205,97 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveFormState() {
+
+        val preferences = getSharedPreferences(
+            "add_product_form",
+            MODE_PRIVATE
+        )
+
+        preferences.edit()
+            .putString(
+                "name",
+                productNameEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "category",
+                productCategoryEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "quantity",
+                productQuantityEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "price",
+                productPriceEditText.text?.toString().orEmpty()
+            )
+            .putString(
+                "minimum_stock",
+                productMinimumStockEditText.text?.toString().orEmpty()
+            )
+            .apply()
+    }
+
+    private fun restoreForm(savedInstanceState: Bundle?) {
+
+        val preferences = getSharedPreferences(
+            "add_product_form",
+            MODE_PRIVATE
+        )
+
+        val name = savedInstanceState?.getString("product_name")
+            ?: preferences.getString("name", "")
+
+        val category = savedInstanceState?.getString("product_category")
+            ?: preferences.getString("category", "")
+
+        val quantity = savedInstanceState?.getString("product_quantity")
+            ?: preferences.getString("quantity", "")
+
+        val price = savedInstanceState?.getString("product_price")
+            ?: preferences.getString("price", "")
+
+        val minimumStock =
+            savedInstanceState?.getString("product_minimum_stock")
+                ?: preferences.getString("minimum_stock", "")
+
+        productNameEditText.setText(name)
+        productCategoryEditText.setText(category)
+        productQuantityEditText.setText(quantity)
+        productPriceEditText.setText(price)
+        productMinimumStockEditText.setText(minimumStock)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        outState.putString(
+            "product_name",
+            productNameEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_category",
+            productCategoryEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_quantity",
+            productQuantityEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_price",
+            productPriceEditText.text?.toString()
+        )
+
+        outState.putString(
+            "product_minimum_stock",
+            productMinimumStockEditText.text?.toString()
+        )
+
+        super.onSaveInstanceState(outState)
+    }
+
     private fun addProduct() {
 
         clearFormErrors()
@@ -198,6 +306,11 @@ class AddProductActivity : AppCompatActivity() {
             .orEmpty()
 
         val category = productCategoryEditText.text
+            ?.toString()
+            ?.trim()
+            .orEmpty()
+
+        val priceText = productPriceEditText.text
             ?.toString()
             ?.trim()
             .orEmpty()
@@ -230,6 +343,14 @@ class AddProductActivity : AppCompatActivity() {
                 return
             }
 
+            priceText.isBlank() -> {
+                productPriceInputLayout.error =
+                    getString(R.string.product_price_required)
+
+                productPriceEditText.requestFocus()
+                return
+            }
+
             quantityText.isBlank() -> {
                 productQuantityInputLayout.error =
                     getString(R.string.product_quantity_required)
@@ -258,6 +379,19 @@ class AddProductActivity : AppCompatActivity() {
             return
         }
 
+        val price = priceText
+            .replace(",", ".")
+            .toDoubleOrNull()
+
+        if (price == null || price < 0) {
+
+            productPriceInputLayout.error =
+                getString(R.string.product_price_invalid)
+
+            productPriceEditText.requestFocus()
+            return
+        }
+
         val minimumStock = minimumStockText.toIntOrNull()
 
         if (minimumStock == null || minimumStock < 0) {
@@ -273,7 +407,8 @@ class AddProductActivity : AppCompatActivity() {
             name = name,
             category = category,
             quantity = quantity,
-            minimumStock = minimumStock
+            minimumStock = minimumStock,
+            price = price
         )
 
         viewModel.addProduct(product)
@@ -307,6 +442,13 @@ class AddProductActivity : AppCompatActivity() {
                             ),
                             Toast.LENGTH_SHORT
                         ).show()
+
+                        getSharedPreferences(
+                            "add_product_form",
+                            MODE_PRIVATE
+                        ).edit()
+                            .clear()
+                            .apply()
 
                         setResult(RESULT_OK)
                         finish()
@@ -352,6 +494,7 @@ class AddProductActivity : AppCompatActivity() {
         productCategoryEditText.isEnabled = !isLoading
         productQuantityEditText.isEnabled = !isLoading
         productMinimumStockEditText.isEnabled = !isLoading
+        productPriceEditText.isEnabled = !isLoading
     }
 
     private fun clearFormErrors() {
@@ -360,5 +503,6 @@ class AddProductActivity : AppCompatActivity() {
         productCategoryInputLayout.error = null
         productQuantityInputLayout.error = null
         productMinimumStockInputLayout.error = null
+        productPriceInputLayout.error = null
     }
 }

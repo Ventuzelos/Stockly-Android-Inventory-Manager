@@ -18,16 +18,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.angelapereira.stockly.data.local.Product
 import com.angelapereira.stockly.data.local.StocklyDatabase
 import com.angelapereira.stockly.data.repository.ProductRepository
+import com.angelapereira.stockly.ui.products.ProductSortOption
 import com.angelapereira.stockly.ui.products.ProductsUiState
 import com.angelapereira.stockly.ui.products.ProductsViewModel
 import com.angelapereira.stockly.ui.products.ProductStockFilter
-import com.angelapereira.stockly.ui.products.ProductSortOption
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
-import com.google.android.material.button.MaterialButton
-
 
 class ProductsActivity : AppCompatActivity() {
 
@@ -41,6 +40,8 @@ class ProductsActivity : AppCompatActivity() {
     private lateinit var viewModel: ProductsViewModel
 
     private var currentQuery = ""
+
+    private var latestProducts: List<Product> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +65,7 @@ class ProductsActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.productsMain)
         ) { view, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
@@ -225,7 +227,7 @@ class ProductsActivity : AppCompatActivity() {
             R.id.filterProductsButton
         ).setOnClickListener {
 
-            showStockFilterDialog()
+            showFilterTypeDialog()
         }
 
         findViewById<MaterialButton>(
@@ -234,6 +236,29 @@ class ProductsActivity : AppCompatActivity() {
 
             showSortDialog()
         }
+    }
+
+    private fun showFilterTypeDialog() {
+
+        val options = arrayOf(
+            "Stock",
+            "Categoria"
+        )
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Filtrar produtos")
+            .setItems(options) { _, which ->
+
+                when (which) {
+                    0 -> showStockFilterDialog()
+                    1 -> showCategoryFilterDialog()
+                }
+            }
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .show()
     }
 
     private fun showStockFilterDialog() {
@@ -273,6 +298,47 @@ class ProductsActivity : AppCompatActivity() {
 
                 viewModel.setStockFilter(
                     selectedFilter
+                )
+
+                dialog.dismiss()
+            }
+            .setNegativeButton(
+                R.string.action_cancel,
+                null
+            )
+            .show()
+    }
+
+    private fun showCategoryFilterDialog() {
+
+        val categories = latestProducts
+            .map { it.category.trim() }
+            .filter { it.isNotBlank() }
+            .distinctBy { it.lowercase() }
+            .sortedBy { it.lowercase() }
+
+        val options = arrayOf("Todas") + categories.toTypedArray()
+
+        val currentCategory =
+            viewModel.getCurrentCategory()
+
+        val checkedItem =
+            options.indexOfFirst {
+                it.equals(
+                    currentCategory,
+                    ignoreCase = true
+                )
+            }.coerceAtLeast(0)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Filtrar por categoria")
+            .setSingleChoiceItems(
+                options,
+                checkedItem
+            ) { dialog, which ->
+
+                viewModel.setCategoryFilter(
+                    options[which]
                 )
 
                 dialog.dismiss()
@@ -324,13 +390,9 @@ class ProductsActivity : AppCompatActivity() {
                     when (which) {
 
                         1 -> ProductSortOption.OLDEST
-
                         2 -> ProductSortOption.NAME_ASC
-
                         3 -> ProductSortOption.NAME_DESC
-
                         4 -> ProductSortOption.STOCK_ASC
-
                         5 -> ProductSortOption.STOCK_DESC
 
                         else -> ProductSortOption.NEWEST
@@ -351,17 +413,22 @@ class ProductsActivity : AppCompatActivity() {
 
     private fun observeUiState() {
         lifecycleScope.launch {
+
             viewModel.uiState.collect { state ->
+
                 when (state) {
+
                     ProductsUiState.Loading -> {
                         showLoadingState()
                     }
 
                     is ProductsUiState.Success -> {
+                        latestProducts = state.products
                         updateProductsList(state.products)
                     }
 
                     is ProductsUiState.DeleteSuccess -> {
+
                         Toast.makeText(
                             this@ProductsActivity,
                             getString(
@@ -375,6 +442,7 @@ class ProductsActivity : AppCompatActivity() {
                     }
 
                     ProductsUiState.DeleteError -> {
+
                         Toast.makeText(
                             this@ProductsActivity,
                             R.string.product_delete_error,
@@ -393,6 +461,7 @@ class ProductsActivity : AppCompatActivity() {
     }
 
     private fun showLoadingState() {
+
         productsCountLabelTextView.text =
             getString(R.string.products_loading)
 
@@ -400,7 +469,10 @@ class ProductsActivity : AppCompatActivity() {
         productsEmptyState.visibility = View.GONE
     }
 
-    private fun updateProductsList(products: List<Product>) {
+    private fun updateProductsList(
+        products: List<Product>
+    ) {
+
         productAdapter.submitList(products)
 
         productsCountLabelTextView.text =
@@ -412,20 +484,23 @@ class ProductsActivity : AppCompatActivity() {
 
         val hasProducts = products.isNotEmpty()
 
-        productsRecyclerView.visibility = if (hasProducts) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        productsRecyclerView.visibility =
+            if (hasProducts) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
-        productsEmptyState.visibility = if (hasProducts) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
+        productsEmptyState.visibility =
+            if (hasProducts) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
     }
 
     private fun showErrorState() {
+
         productsCountLabelTextView.text =
             getString(R.string.products_load_error)
 
@@ -434,8 +509,11 @@ class ProductsActivity : AppCompatActivity() {
     }
 
     private fun confirmDelete(product: Product) {
+
         MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.delete_product_dialog_title)
+            .setTitle(
+                R.string.delete_product_dialog_title
+            )
             .setMessage(
                 getString(
                     R.string.delete_product_dialog_message,
@@ -449,6 +527,7 @@ class ProductsActivity : AppCompatActivity() {
             .setPositiveButton(
                 R.string.action_delete
             ) { _, _ ->
+
                 viewModel.deleteProduct(product)
             }
             .show()

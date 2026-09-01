@@ -9,9 +9,10 @@ import androidx.room.TypeConverters
 @Database(
     entities = [
         Product::class,
-        StockMovement::class
+        StockMovement::class,
+        User::class
     ],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(StocklyConverters::class)
@@ -21,6 +22,8 @@ abstract class StocklyDatabase : RoomDatabase() {
 
     abstract fun stockMovementDao(): StockMovementDao
 
+    abstract fun userDao(): UserDao
+
     companion object {
 
         @Volatile
@@ -28,6 +31,7 @@ abstract class StocklyDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): StocklyDatabase {
             return INSTANCE ?: synchronized(this) {
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     StocklyDatabase::class.java,

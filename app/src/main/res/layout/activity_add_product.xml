@@ -100,6 +100,27 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
+        <!-- PREÇO -->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/addProductPriceInputLayout"
+            style="@style/Widget.Stockly.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_12"
+            android:hint="@string/product_price_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/addProductPriceEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
         <!-- QUANTIDADE + STOCK MÍNIMO -->
 
         <LinearLayout
@@ -126,7 +147,6 @@
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/addProductMinimumStockInputLayout"

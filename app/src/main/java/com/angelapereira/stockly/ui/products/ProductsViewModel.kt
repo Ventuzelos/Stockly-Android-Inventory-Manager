@@ -44,6 +44,8 @@ class ProductsViewModel(
 
     private var currentFilter = ProductStockFilter.ALL
 
+    private var currentCategory = "Todas"
+
     private var currentSort = ProductSortOption.NEWEST
 
     fun observeProducts(query: String) {
@@ -66,7 +68,7 @@ class ProductsViewModel(
 
                 productsFlow.collectLatest { products ->
 
-                    val filteredProducts =
+                    val filteredByStock =
                         when (currentFilter) {
 
                             ProductStockFilter.ALL -> {
@@ -83,6 +85,18 @@ class ProductsViewModel(
                                 products.filter {
                                     it.isLowStock
                                 }
+                            }
+                        }
+
+                    val filteredProducts =
+                        if (currentCategory == "Todas") {
+                            filteredByStock
+                        } else {
+                            filteredByStock.filter {
+                                it.category.equals(
+                                    currentCategory,
+                                    ignoreCase = true
+                                )
                             }
                         }
 
@@ -151,6 +165,17 @@ class ProductsViewModel(
 
     fun getCurrentFilter(): ProductStockFilter {
         return currentFilter
+    }
+
+    fun setCategoryFilter(category: String) {
+
+        currentCategory = category
+
+        observeProducts(currentQuery)
+    }
+
+    fun getCurrentCategory(): String {
+        return currentCategory
     }
 
     fun setSortOption(

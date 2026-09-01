@@ -397,14 +397,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showStockMovements() {
-
-        Toast.makeText(
-            this,
-            "Selecione um produto para consultar os movimentos.",
-            Toast.LENGTH_SHORT
-        ).show()
-
-        showProducts()
+        startActivity(
+            Intent(
+                this,
+                StockMovementHistoryActivity::class.java
+            )
+        )
     }
 
     private fun observeInventorySummary() {
